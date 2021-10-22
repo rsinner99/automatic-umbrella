@@ -1,0 +1,4 @@
+minio
+celery
+redis
+amqp
