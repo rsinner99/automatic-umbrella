@@ -9,7 +9,7 @@ services:
       MYSQL_USER: user
       MYSQL_PASSWORD: user
     volumes:
-      - ./init:/docker-entrypoint-initdb.d
+      - ./volumes/db:/docker-entrypoint-initdb.d
     ports:
       - "3302:3306"
 
@@ -37,14 +37,26 @@ services:
       - rabbitmq
       - redis
 
-  producer:
-    image: producer
+  minio:
+    image: minio/minio
+    command: server /export --console-address ":9090"
+    volumes:
+      - ./volumes/minio:/export
+    ports:
+      - 9000:9000
+      - 9090:9090
+    environment:
+      - MINIO_ACCESS_KEY=access-key
+      - MINIO_SECRET_KEY=secret-key
+
+  web:
+    image: web
     build: 
         context: .
-        dockerfile: ./producer/Dockerfile
+        dockerfile: ./web/Dockerfile
     command: python manage.py runserver 0.0.0.0:8000
     volumes:
-      - ./producer/:/code/
+      - ./web/:/code/
     ports:
       - 8000:8000
     depends_on:
@@ -52,7 +64,7 @@ services:
     env_file:
       - ./.env.dev
     environment:
-      - DJANGO_ALLOWED_HOSTS=producer localhost
+      - DJANGO_ALLOWED_HOSTS=web localhost
       - BROKER_URL=amqp://guest:guest@rabbitmq//
       - REDIS_URL=redis://redis
       - SQL_HOST=db
@@ -67,7 +79,7 @@ services:
     environment:
       - BROKER_URL=amqp://guest:guest@rabbitmq//
       - REDIS_URL=redis://redis
-      - API_URL=http://producer:8000/
+      - API_URL=http://web:8000/
       
   hello:
     image: hello_worker
@@ -79,6 +91,21 @@ services:
     environment:
       - BROKER_URL=amqp://guest:guest@rabbitmq//
       - REDIS_URL=redis://redis
+
+  storage:
+    image: storage_worker
+    build:
+      context: .
+      dockerfile: ./storage/Dockerfile
+    deploy:
+      replicas: 1
+    environment:
+      - BROKER_URL=amqp://guest:guest@rabbitmq//
+      - REDIS_URL=redis://redis
+      - MINIO_ACCESS_KEY=access-key
+      - MINIO_SECRET_KEY=secret-key
+      - MINIO_ENDPOINT=minio:9000
+      - MINIO_SECURE=0
 
   ssh-server:
     image: linuxserver/openssh-server
