@@ -1,0 +1,118 @@
+{% extends 'base.html' %} {% block content %} {% load static %}
+<script>
+    var handler = '';
+    let intervalVar = null;
+
+    function listfiles() {
+        console.log('listfiles...')
+        let path = "{{args.api_url}}" + '/api/files'
+
+        $.ajax({
+            method: 'GET',
+            url: path,
+            contentType: 'application/json; charset=utf-8',
+            dataType: 'json',
+            success: function(res) {
+                console.log("success")
+                intervalVar = setInterval(function() {
+                    checkTaskResult(res.result.task_id)
+                }, 5000)
+            },
+            error: function(err) {
+                //show error msg
+                console.log(err)
+                $("#error").html("Could not list files. Request failed!")
+                $('#error').css('display', 'block')
+                $("#file_buttons").css('display', 'block')
+            }
+        });
+    };
+
+    function get_file() {
+        console.log("getfile...")
+        let filename = document.getElementById("filename_form");
+        let path = "{{args.api_url}}" + '/api/files?file=' + filename
+
+        $.ajax({
+            method: 'GET',
+            url: path,
+            contentType: 'application/json; charset=utf-8',
+            dataType: 'json',
+            success: function(res) {
+                intervalVar = setInterval(function() {
+                    checkTaskResult(res.result.task_id)
+                }, 5000)
+            },
+            error: function(err) {
+                console.log(err)
+                $("#error").html("Could not list files. Request failed!")
+                $('#error').css('display', 'block')
+                $("#file_buttons").css('display', 'block')
+            }
+        });
+    };
+
+    function checkTaskResult(tasknumber) {
+        let path = "{{args.api_url}}" + '/api/task/result?task=' + tasknumber
+
+        $.ajax({
+            method: 'GET',
+            url: path,
+            contentType: 'application/json; charset=utf-8',
+            dataType: 'json',
+            success: function(data) {
+                if (data.result.status === "SUCCESS") {
+                    $("#info").html("Task completed successfully.")
+                    $('#info').css('display', 'block')
+                    $("#file_buttons").css('display', 'block')
+                    console.log(data.result)
+                    clearInterval(intervalVar)
+                } else if (data.result.status === "FAILURE" || data.result.status === "REVOKED") {
+                    $("#error").html("Task Failed or Revoked!")
+                    $('#error').css('display', 'block')
+                    $("#file_buttons").css('display', 'block')
+                    clearInterval(intervalVar)
+                } else {
+                    // $("#progressbar").progressbar({ value: 30 });
+                }
+            },
+            error: function(err) {
+                console.log(err)
+                $("#error").html("Could not validate task result. Request failed!")
+                $('#error').css('display', 'block')
+                clearInterval(intervalVar)
+            }
+        })
+    }
+</script>
+
+<style>
+    div#file_buttons {
+        margin-top: 50px;
+        margin-left: 50px;
+    }
+</style>
+
+<div style="padding-left:16px">
+    <h2>Files</h2>
+</div>
+
+<div>
+    Files are located in an external store. To safe you some time, we don't load all the files from the storage. <br> You can either request a list of all files or request the content of a specific one. Of course it is also possibile to create a new file.
+    <br>
+</div>
+
+<div id="file_buttons">
+    <button id="list_files_button" onClick="listfiles()">List all files</button><br>
+    <form id='filename_form' method="get">
+        File: <input type="text" name="file" id="file">
+    </form>
+    <button onclick="get_file()">
+        Get content
+    </button>
+    <form action="{% url 'frontend:file_create' %}" method="get">
+        <input type="submit" value="Create file" />
+    </form>
+</div>
+
+{% endblock %}

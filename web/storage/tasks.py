@@ -11,3 +11,7 @@ def get_content(filename):
 @app.task(name='storage.put_file')
 def put_file(filename, filepath):
     raise NotImplementedError()
+
+@app.task(name='storage.list_files')
+def list_files():
+    raise NotImplementedError()

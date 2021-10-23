@@ -1,0 +1,29 @@
+{% extends 'base.html' %} {% block content %} {% load static %}
+<div style="padding-left:16px">
+    <h2>Peers</h2>
+</div>
+<div>
+    <table>
+        <tr>
+            <th>Hostname</th>
+            <th>IP-Address</th>
+            <th>Username</th>
+            <th>SSH-Port</th>
+            <th>OS</th>
+        </tr>
+        {% for peer in result %}
+        <tr>
+            <th>
+                <a href="{% url 'frontend:peer_view' peer.pk %}">
+                    {{ peer.hostname }}</a>
+            </th>
+            <th> {{ peer.ip_address }}</th>
+            <th> {{ peer.username }}</th>
+            <th> {{ peer.ssh_port }}</th>
+            <th> {{ peer.get_os_display }} </th>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+
+{% endblock %}

@@ -1,6 +1,6 @@
 import io
 from minio import Minio
-
+from serializers import serialize_minio_list, serialize_minio_object
 import settings
 
 class Storage():
@@ -19,19 +19,19 @@ class Storage():
 
     def list(self, prefix=None, include_version=False):
         objects = self.client.list_objects(self.name, prefix=prefix, include_version=include_version)
-        return objects
+        return serialize_minio_list(objects)
 
     def get(self, object_name: str, version_id=None):
         try:
-            response = self.client.get_object(self.name, object_name)
+            response = self.client.get_object(self.name, object_name, version_id=version_id)
         finally:
             response.close()
             response.release_conn()
         try:
-            content = response.data.decode('UTF-8')
+            data = serialize_minio_object(response)
         except:
-            content = response.data
-        return content
+            return response
+        return data
 
     def fget(self, object_name: str, file_path: str, version_id=None):
         return self.client.fget_object(self.name, object_name, file_path, version_id=version_id)

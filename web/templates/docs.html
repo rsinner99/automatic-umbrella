@@ -1,0 +1,28 @@
+{% extends 'base.html' %} {% block content %} {% load static %}
+<div style="padding-left:16px">
+    <h2>Docs</h2>
+</div>
+<div>
+    <table>
+        <tr>
+            <th>Name</th>
+            <th>Type</th>
+            <th>Created</th>
+            <th>Modified</th>
+            <th>OS</th>
+        </tr>
+        {% for doc in result %}
+        <tr>
+            <th>
+                <a href="{% url 'frontend:doc_view' doc.pk %}">{{ doc.name }}</a>
+            </th>
+            <th> {{ doc.get_type_display }}</th>
+            <th> {{ doc.created }}</th>
+            <th> {{ doc.modified }}</th>
+            <th> {{ doc.get_os_display }} </th>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+
+{% endblock %}

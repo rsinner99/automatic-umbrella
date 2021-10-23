@@ -20,10 +20,11 @@ class FileView(GenericAPIView):
 
     def get(self, request):
         filename = request.query_params.get('filename', None)
-        if not filename:
-            return HttpResponse(json.dumps(MISSING_FILENAME), status=status.HTTP_400_BAD_REQUEST, content_type='application/json')
+        if filename:
+            result = tasks.get_content.delay(filename)
+        else:
+            result = tasks.list_files.delay()
 
-        result = tasks.get_content.delay(filename)
         resp = {
             'id': result.id,
             'state': result.state
