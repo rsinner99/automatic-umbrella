@@ -44,7 +44,7 @@ class ApiScriptView(ScriptView):
 
 class ApiFileView(FileView):
     def get(self, request):
-        response = super().post(request)
+        response = super().get(request)
         result = json.loads(response.content)
 
         task_id = result.get('id', None)

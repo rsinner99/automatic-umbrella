@@ -17,3 +17,7 @@ class PeerForm(forms.ModelForm):
 class FileForm(forms.Form):
     filename = forms.CharField(error_messages={'required': 'Please enter a filename'})
     content = forms.CharField(widget=forms.Textarea())
+
+class FileViewForm(forms.Form):
+    filename = forms.CharField(widget=forms.TextInput(attrs={'readonly':'readonly'}))
+    content = forms.CharField(widget=forms.Textarea(attrs={'readonly':'readonly'}))

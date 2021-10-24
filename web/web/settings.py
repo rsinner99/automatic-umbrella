@@ -152,4 +152,4 @@ CELERY_TASK_ROUTES =  {
 }
 
 
-API_URL = os.environ.get('API_URL')
+EXTERNAL_API_URL = os.environ.get('EXTERNAL_API_URL')

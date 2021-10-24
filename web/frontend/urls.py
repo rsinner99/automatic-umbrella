@@ -17,5 +17,6 @@ urlpatterns = [
 
     path('files/', views.files, name='files'),
     path('files/create/', views.create_file, name='file_create'),
-    
+    path('files/list', views.list_files, name='file_list'),
+    path('files/view', views.view_file, name='file_view'),
 ]

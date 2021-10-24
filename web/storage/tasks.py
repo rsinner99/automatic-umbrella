@@ -13,5 +13,5 @@ def put_file(filename, filepath):
     raise NotImplementedError()
 
 @app.task(name='storage.list_files')
-def list_files():
+def list_files(prefix=None):
     raise NotImplementedError()

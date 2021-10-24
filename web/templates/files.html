@@ -1,11 +1,14 @@
 {% extends 'base.html' %} {% block content %} {% load static %}
 <script>
     var handler = '';
-    let intervalVar = null;
+    task_id = '';
+    task_name = '';
+    intervalVar = null;
 
-    function listfiles() {
-        console.log('listfiles...')
+    function listFiles() {
+        console.log('listFiles...')
         let path = "{{args.api_url}}" + '/api/files'
+        task_name = 'listFiles'
 
         $.ajax({
             method: 'GET',
@@ -13,9 +16,12 @@
             contentType: 'application/json; charset=utf-8',
             dataType: 'json',
             success: function(res) {
-                console.log("success")
                 intervalVar = setInterval(function() {
-                    checkTaskResult(res.result.task_id)
+                    try {
+                        checkTaskResult(res.task_id)
+                    } catch (e) {
+                        console.log(e)
+                    }
                 }, 5000)
             },
             error: function(err) {
@@ -30,8 +36,9 @@
 
     function get_file() {
         console.log("getfile...")
-        let filename = document.getElementById("filename_form");
-        let path = "{{args.api_url}}" + '/api/files?file=' + filename
+        let filename = document.getElementById("filename_input").value;
+        let path = "{{args.api_url}}" + '/api/files?filename=' + filename
+        task_name = 'get_file'
 
         $.ajax({
             method: 'GET',
@@ -40,7 +47,11 @@
             dataType: 'json',
             success: function(res) {
                 intervalVar = setInterval(function() {
-                    checkTaskResult(res.result.task_id)
+                    try {
+                        checkTaskResult(res.task_id)
+                    } catch (e) {
+                        console.log(e)
+                    }
                 }, 5000)
             },
             error: function(err) {
@@ -61,13 +72,18 @@
             contentType: 'application/json; charset=utf-8',
             dataType: 'json',
             success: function(data) {
-                if (data.result.status === "SUCCESS") {
+                if (data.status === "SUCCESS") {
                     $("#info").html("Task completed successfully.")
                     $('#info').css('display', 'block')
                     $("#file_buttons").css('display', 'block')
                     console.log(data.result)
+                    task_id = data.task_id
+
+                    let hidden = document.getElementById("result_button")
+                    hidden.style.display = "block";
+
                     clearInterval(intervalVar)
-                } else if (data.result.status === "FAILURE" || data.result.status === "REVOKED") {
+                } else if (data.status === "FAILURE" || data.status === "REVOKED") {
                     $("#error").html("Task Failed or Revoked!")
                     $('#error').css('display', 'block')
                     $("#file_buttons").css('display', 'block')
@@ -84,12 +100,29 @@
             }
         })
     }
+
+    function showResult() {
+        var url = ''
+        if (task_name === "listFiles") {
+            var url = "{% url 'frontend:file_list' %}";
+        } else if (task_name === 'get_file') {
+            var url = "{% url 'frontend:file_view' %}";
+        } else {
+            console.log('Invalid task')
+            return;
+        }
+        document.location.href = url + "?task=" + task_id
+    }
 </script>
 
 <style>
     div#file_buttons {
         margin-top: 50px;
         margin-left: 50px;
+    }
+    
+    #result_button {
+        display: none;
     }
 </style>
 
@@ -103,9 +136,9 @@
 </div>
 
 <div id="file_buttons">
-    <button id="list_files_button" onClick="listfiles()">List all files</button><br>
+    <button id="list_files_button" onClick="listFiles()">List all files</button><br>
     <form id='filename_form' method="get">
-        File: <input type="text" name="file" id="file">
+        File: <input id='filename_input' type="text" name="file" id="file">
     </form>
     <button onclick="get_file()">
         Get content
@@ -113,6 +146,9 @@
     <form action="{% url 'frontend:file_create' %}" method="get">
         <input type="submit" value="Create file" />
     </form>
+</div>
+<div id="result_button">
+    <button onclick="showResult()">Show Result</button>
 </div>
 
 {% endblock %}

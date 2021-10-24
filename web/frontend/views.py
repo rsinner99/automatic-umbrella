@@ -1,11 +1,16 @@
-from django.http.response import HttpResponseRedirect
+import json
+
+from django.http.response import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.conf import settings
+from celery.result import AsyncResult
 
 from web.utils import reverse
 from . import forms
 from scripts import models as scripts
 from storage import tasks as storage
+
+API_URL = settings.EXTERNAL_API_URL
 
 def index(request):
     return render(request, 'base.html')
@@ -44,7 +49,7 @@ def peer_view(request, peer_id):
 
 def files(request):
     args = {
-        'api_url': settings.API_URL
+        'api_url': API_URL
     }
     return render(request, 'files.html', {'args': args})
 
@@ -56,4 +61,17 @@ def create_file(request):
             data = form.cleaned_data
             storage.put_content.delay(data['filename'], data['content'])
             return HttpResponseRedirect(reverse('frontend:files'))
+    return render(request, 'base_view.html', {'form': form})
+
+def list_files(request):
+    task_id = request.GET.get('task', None)
+    result = AsyncResult(task_id)._get_task_meta()
+    files = result.get('result').get('files')
+    return render(request, 'files_list.html', {'result': files})
+
+def view_file(request):
+    task_id = request.GET.get('task', None)
+    result = AsyncResult(task_id)._get_task_meta()
+    file = result.get('result')
+    form = forms.FileViewForm(file)
     return render(request, 'base_view.html', {'form': form})

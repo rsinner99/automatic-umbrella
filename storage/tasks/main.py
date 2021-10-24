@@ -36,9 +36,9 @@ def get_content(filename: str):
     }
 
 @app.task(name='storage.list_files')
-def list_files():
+def list_files(prefix=None, include_version=False):
     store = FileStorage()
-    result = store.list()
+    result = store.list(prefix=None, include_version=False)
     return {
         'files': result
     }
