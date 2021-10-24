@@ -48,10 +48,17 @@ def peer_view(request, peer_id):
     return render(request, 'base_view.html', {'form': form})
 
 def files(request):
+    form = forms.FileForm()
+    if request.method == 'POST':
+        form = forms.FileForm(request.POST)
+        if form.is_valid():
+            data = form.cleaned_data
+            storage.put_content.delay(data['filename'], data['content'])
+            return HttpResponseRedirect(reverse('frontend:files'))
     args = {
         'api_url': API_URL
     }
-    return render(request, 'files.html', {'args': args})
+    return render(request, 'files.html', {'args': args, 'form': form})
 
 def create_file(request):
     form = forms.FileForm()

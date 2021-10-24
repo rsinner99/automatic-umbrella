@@ -68,8 +68,10 @@
 <body>
 
     <div class="topnav">
-        <a class="active" href="{% url 'frontend:index' %}">
+        <!--<a class="active" href="{% url 'frontend:index' %}">
             <img alt="AutomaticUmbrella" src="{%  static 'icons/favicon.svg' %}" width="50"></a>
+        -->
+        <a href="{% url 'frontend:index' %}">Home</a>
         <a href="{% url 'frontend:peers' %}">Peers</a>
         <a href="{% url 'frontend:docs' %}">Docs</a>
         <a href="{% url 'frontend:files' %}">Files</a>

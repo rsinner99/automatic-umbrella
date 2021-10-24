@@ -15,14 +15,18 @@ Including another URLconf
 """
 from django.urls import path
 from django.conf.urls import include
+from django.views.generic.base import RedirectView
 from django.contrib import admin
 
-urlpatterns = [
-    path('admin/', admin.site.urls),
 
+urlpatterns = [
+    path('frontend/admin/', admin.site.urls),
     path('hello/', include('hello.urls')),
     path('scripts/', include('scripts.urls')),
     path('storage/', include('storage.urls')),
     path('api/', include('api.urls')),
     path('frontend/', include('frontend.urls')),
+
+    path('', RedirectView.as_view(url='/frontend', permanent=True), name='index')
+
 ]
