@@ -1,0 +1,32 @@
+{% extends 'base.html' %} {% block content %} {% load static %}
+<div style="padding-left:16px">
+    <h2>Children of Task {{ origin }}</h2>
+</div>
+<div>
+    <table>
+        <tr>
+            <th>Task ID</th>
+            <th>Name</th>
+            <th>args</th>
+            <th>kwargs</th>
+            <th>Status</th>
+            <th>Worker</th>
+            <th>Date done</th>
+        </tr>
+        {% for child in children %}
+        <tr>
+            <th>
+                <a href="{% url 'frontend:show_task' child.task_id %}">{{ child.task_id }}</a>
+            </th>
+            <th> {{ child.name }} </th>
+            <th> {{ child.args }} </th>
+            <th> {{ child.kwargs }} </th>
+            <th> {{ child.status }} </th>
+            <th> {{ child.worker }} </th>
+            <th> {{ child.date_done }} </th>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+
+{% endblock %}

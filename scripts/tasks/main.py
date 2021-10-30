@@ -1,6 +1,7 @@
 import paramiko
+from celery import group
 
-from config import app
+from worker import app
 from utils import get_doc, get_peer_and_account, connect
 import run
 
@@ -8,13 +9,30 @@ DOC_TYPE_BASH = 'sh'
 DOC_TYPE_PYTHON = 'py'
 
 @app.task(name='scripts.run_script')
-def run_script(doc_id: int, peer_id):
+def run_script(doc_id: int, peers: list or int):
+    if isinstance(peers, list):
+        if len(peers) > 1:
+            task_list = []
+            children = []
+            for peer_id in peers:
+                sig = run_script.s(doc_id, peer_id) # create signature
+                ar = sig.freeze() # without freeze(), the subtask id is not accessible at this point
+                task_list.append(sig)
+                children.append({'task_id': ar.id, 'peer': peer_id, 'doc': doc_id})
+            g = group(task_list).apply_async()
+            return {
+                'task_id': g.id,
+                'children': children
+            }
+        else:
+            peers = peers[0]
+
     result = {
         'output': None,
         'error': None
     }
     doc = get_doc(doc_id)
-    peer = get_peer_and_account(peer_id)
+    peer = get_peer_and_account(peers)
     script = doc.get('content')
 
     ssh = connect(peer)
@@ -34,4 +52,6 @@ def run_script(doc_id: int, peer_id):
 
     return result
 
-
+@app.task(name='storage.put_content')
+def put_content(content, filename):
+    raise NotImplementedError()

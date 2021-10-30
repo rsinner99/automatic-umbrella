@@ -1,13 +1,13 @@
 import os
 
-from config import app
+from worker import app
 from store import Storage
 
 class FileStorage(Storage):
     name = 'files'
 
 @app.task(name='storage.put_content')
-def put_content(filename: str, content: str):
+def put_content(content: str, filename: str):
     store = FileStorage()
     path = f'/tmp/{filename}'
     with open(path, 'w') as f:
@@ -42,3 +42,7 @@ def list_files(prefix=None, include_version=False):
     return {
         'files': result
     }
+
+@app.task(name='scripts.run_script')
+def run_script(doc_id, peers):
+    raise NotImplementedError()

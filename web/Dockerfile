@@ -12,11 +12,12 @@ WORKDIR /code
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
-ADD ./web ./
-
 # install dependencies
 RUN pip install virtualenv
 RUN virtualenv venv
 RUN pip install --upgrade pip
 RUN source venv/bin/activate
+COPY ./web/requirements.txt ./requirements.txt
 RUN pip install -r requirements.txt
+
+COPY ./web ./

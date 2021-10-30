@@ -106,6 +106,8 @@ services:
       - BROKER_URL=amqp://guest:guest@rabbitmq//
       - REDIS_URL=redis://redis
       - API_URL=http://web:8000/
+    extra_hosts:
+    - "host.docker.internal:host-gateway"
       
   hello:
     image: hello_worker
@@ -135,8 +137,8 @@ services:
 
   ssh-server:
     image: linuxserver/openssh-server
-    container_name: ssh-server
-    hostname: ssh-server
+    container_name: ssh-server-01
+    hostname: ssh-server-01
     environment:
       - PUID=1000
       - PGID=1000

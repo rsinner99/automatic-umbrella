@@ -1,7 +1,7 @@
 from web.celery import app
 
 @app.task(name='storage.put_content')
-def put_content(filename, content):
+def put_content(content, filename):
     raise NotImplementedError()
 
 @app.task(name='storage.get_content')

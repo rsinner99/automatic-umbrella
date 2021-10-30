@@ -38,8 +38,9 @@ class ScriptView(GenericAPIView):
         if not doc:
             return HttpResponse(json.dumps(MISSING_DOC), status=status.HTTP_400_BAD_REQUEST, content_type='application/json')
 
-        peer = Peer.objects.get(hostname=hostname)
-        result = tasks.run_script.delay(doc, peer.id)
+        host_list = hostname.split(',')
+        peer = Peer.objects.filter(hostname__in=host_list).values_list('pk', flat=True)
+        result = tasks.run_script.delay(doc, list(peer))
         resp = {
             'id': result.id,
             'state': result.state

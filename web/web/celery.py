@@ -1,11 +1,11 @@
 import os
 from celery import Celery
-from django.conf import settings
+from . import celery_settings
 
-BROKER_URL = os.environ.get("BROKER_URL", "amqp://guest:guest@localhost//")
-REDIS_URL = os.environ.get("REDIS_URL", "redis://localhost")
+BROKER_URL = celery_settings.BROKER_URL
+REDIS_URL = celery_settings.REDIS_URL
 
 app = Celery('tasks', broker=BROKER_URL, backend=REDIS_URL)
-app.config_from_object(settings, namespace='CELERY')
+app.config_from_object(celery_settings, namespace='CELERY')
 
 app.autodiscover_tasks()

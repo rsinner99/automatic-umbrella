@@ -82,9 +82,6 @@
                     console.log(data.result)
                     task_id = data.task_id
 
-                    let hidden = document.getElementById("result_button")
-                    hidden.style.display = "block";
-
                     clearInterval(intervalVar)
                 } else if (data.status === "FAILURE" || data.status === "REVOKED") {
                     $("#error").html("Task Failed or Revoked!")
@@ -95,6 +92,7 @@
                     // $("#progressbar").progressbar({ value: 30 });
                 }
                 $("#task_loader").hide();
+                showResult()
             },
             error: function(err) {
                 console.log(err)
@@ -247,9 +245,6 @@
             File: <input id='filename_input' type="text" name="file" id="file">
         </form>
         <button id='getFile_button' onclick="get_file()">View file</button>
-    </div>
-    <div id="result_button">
-        <button onclick="showResult()">Show Result</button>
     </div>
     <div style="display:none" id="createFileForm">
         <form method="post">

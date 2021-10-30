@@ -8,6 +8,7 @@ urlpatterns = [
     path('token/refresh/', simplejwt.TokenRefreshView.as_view(), name='token_refresh'),
 
     path('task/result', views.ApiTaskView.as_view(), name='api-task-result'),
+    path('task/run_and_store', views.ApiScriptStoreView.as_view(), name='api-task-run'),
     path('script/run', views.ApiScriptView.as_view(), name='api-script-run'),
     path('files', views.ApiFileView.as_view(), name='api-files'),
 ]

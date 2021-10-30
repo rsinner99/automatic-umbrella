@@ -1,6 +1,7 @@
 import json
 
 from celery.result import AsyncResult
+from celery.execute import send_task 
 
 from django.http import HttpResponse, HttpResponseRedirect
 from rest_framework.generics import GenericAPIView
@@ -8,6 +9,7 @@ from rest_framework import status
 
 from web.serializers import TaskSerializer
 from web.utils import reverse
+from web import tasks as common
 from scripts.views import ScriptView
 from storage.views import FileView
 
@@ -29,6 +31,21 @@ class ApiTaskView(GenericAPIView):
             result['task_id'] = task_id
 
         return HttpResponse(json.dumps(result), status=status.HTTP_200_OK, content_type='application/json')
+
+class ApiScriptStoreView(GenericAPIView):
+    serializer_class = TaskSerializer
+
+    def post(self, request):
+        kwargs = request.query_params
+        doc = int(kwargs.get('doc'))
+        peers = kwargs.get('peers').split(',')
+        filename = kwargs.get('filename')
+        result = common.run_script_output_to_storage.delay(doc, peers, filename)
+        resp = {
+            'id': result.id,
+            'state': result.state
+        }
+        return HttpResponse(json.dumps(resp), status=status.HTTP_200_OK, content_type='application/json')
 
     
 class ApiScriptView(ScriptView):

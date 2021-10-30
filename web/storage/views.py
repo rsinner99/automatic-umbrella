@@ -39,7 +39,7 @@ class FileView(GenericAPIView):
         content = request.query_params.get('content', None)
         filepath = request.query_params.get('filepath', None)
         if content:
-            result = tasks.put_content.delay(filename, content)
+            result = tasks.put_content.delay(content, filename)
         elif filepath:
             result = tasks.put_file.delay(filename, filepath)
         else:
