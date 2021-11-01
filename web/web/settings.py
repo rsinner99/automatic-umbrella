@@ -39,10 +39,12 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework_simplejwt',
+    'corsheaders',
     'web',
     'hello',
     'scripts',
     'storage',
+    'pinger',
     'api',
     'frontend',
 ]
@@ -51,7 +53,8 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware', 
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
+#    'django.middleware.csrf.CsrfViewMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -144,3 +147,5 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 EXTERNAL_API_URL = os.environ.get('EXTERNAL_API_URL')
+
+CORS_ORIGIN_ALLOW_ALL = True

@@ -9,4 +9,4 @@ RUN pip install -r requirements.txt
 ADD ./hello/main.py ./
 ADD ./celery_tasks/ ./
 
-ENTRYPOINT celery -A main worker --concurrency=4 --loglevel=info -n scripts.hello.%h --queues=hello,default
+ENTRYPOINT celery -A main worker --concurrency=4 --loglevel=info -n worker.hello.%h --queues=hello,default

@@ -11,7 +11,7 @@ def put_content(content: str, filename: str):
     store = FileStorage()
     path = f'/tmp/{filename}'
     with open(path, 'w') as f:
-        f.write(content)
+        f.write(str(content))
     object = store.fput(filename, path)
     os.remove(path)
     result = {

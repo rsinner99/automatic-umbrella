@@ -1,136 +1,18 @@
 {% extends 'base.html' %} {% block content %} {% load static %}
 <script type="text/javascript" src="https://code.jquery.com/jquery-1.7.1.min.js"></script>
 <script>
-    var handler = '';
-    task_id = '';
-    task_name = '';
-    intervalVar = null;
-
-    function get_file(filename) {
-        $("#task_loader").show();
-        console.log("getfile...")
-        let path = "{{args.api_url}}" + '/api/files?filename=' + filename
-        task_name = 'get_file'
-
-        $.ajax({
-            method: 'GET',
-            url: path,
-            contentType: 'application/json; charset=utf-8',
-            dataType: 'json',
-            success: function(res) {
-                intervalVar = setInterval(function() {
-                    try {
-                        checkTaskResult(res.task_id)
-                    } catch (e) {
-                        console.log(e)
-                    }
-                }, 5000)
-            },
-            error: function(err) {
-                console.log(err)
-                $("#error").html("Could not list files. Request failed!")
-                $('#error').css('display', 'block')
-                $("#file_buttons").css('display', 'block')
-            }
-        });
-    };
-
-    function checkTaskResult(tasknumber) {
-        let path = "{{args.api_url}}" + '/api/task/result?task=' + tasknumber
-
-        $.ajax({
-            method: 'GET',
-            url: path,
-            contentType: 'application/json; charset=utf-8',
-            dataType: 'json',
-            success: function(data) {
-                if (data.status === "SUCCESS") {
-                    $("#info").html("Task completed successfully.")
-                    $('#info').css('display', 'block')
-                    $("#file_buttons").css('display', 'block')
-                    console.log(data.result)
-                    task_id = data.task_id
-
-                    clearInterval(intervalVar)
-                } else if (data.status === "FAILURE" || data.status === "REVOKED") {
-                    $("#error").html("Task Failed or Revoked!")
-                    $('#error').css('display', 'block')
-                    $("#file_buttons").css('display', 'block')
-                    clearInterval(intervalVar)
-                } else {
-                    // $("#progressbar").progressbar({ value: 30 });
-                }
-                $("#task_loader").hide();
-                showResult()
-            },
-            error: function(err) {
-                console.log(err)
-                $("#error").html("Could not validate task result. Request failed!")
-                $('#error').css('display', 'block')
-                clearInterval(intervalVar)
-            }
-        })
-    }
-
-    function showResult() {
-        var url = ''
-        if (task_name === "listFiles") {
-            var url = "{% url 'frontend:file_list' %}";
-        } else if (task_name === 'get_file') {
-            var url = "{% url 'frontend:file_view' %}";
-        } else {
-            console.log('Invalid task')
-            return;
-        }
-        document.location.href = url + "?task=" + task_id
-    }
-
     $(document).on("click", ".file_load_button", function() {
         let filename = $(this).text();;
         console.log(filename);
-        get_file(filename);
+
+        var url = "{% url 'frontend:file_view' filename=0 %}".replace('0', filename.toString())
+        document.location.href = url
     });
 </script>
-<style>
-    .loader {
-        border: 16px solid #f3f3f3;
-        border-radius: 50%;
-        border-top: 16px solid #3498db;
-        width: 150px;
-        height: 150px;
-        -webkit-animation: spin 1s linear infinite;
-        /* Safari */
-        animation: spin 1s linear infinite;
-        margin: 0 auto;
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        margin: -75px 0 0 -75px;
-    }
-    /* Safari */
-    
-    @-webkit-keyframes spin {
-        0% {
-            -webkit-transform: rotate(0deg);
-        }
-        100% {
-            -webkit-transform: rotate(360deg);
-        }
-    }
-    
-    @keyframes spin {
-        0% {
-            transform: rotate(0deg);
-        }
-        100% {
-            transform: rotate(360deg);
-        }
-    }
-</style>
+
 <div style="padding-left:16px">
     <h2>Files</h2>
 </div>
-<div style="display:none" id='task_loader' class="loader"></div>
 <div>
     <table>
         <tr>

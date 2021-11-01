@@ -98,14 +98,16 @@ def create_file(request):
     return render(request, 'base_view.html', {'form': form})
 
 def list_files(request):
-    task_id = request.GET.get('task', None)
-    result = AsyncResult(task_id)._get_task_meta()
+    task = storage.list_files.delay()
+    task.get()
+    result = task._get_task_meta()
     files = result.get('result').get('files')
     return render(request, 'files_list.html', {'args': DEFAULT_ARGS, 'result': files})
 
-def view_file(request):
-    task_id = request.GET.get('task', None)
-    result = AsyncResult(task_id)._get_task_meta()
+def view_file(request, filename):
+    task = storage.get_content.delay(filename)
+    task.get()
+    result = task._get_task_meta()
     file = result.get('result')
     if request.method == 'POST':
         form = forms.FileForm(request.POST)
@@ -124,7 +126,7 @@ def execute_task(request):
             result = send_task(data['taskname'], kwargs=data['kwargs'])
             return HttpResponseRedirect(reverse('frontend:show_task', kwargs={'task_id': result.id}))
         else :
-            print('invalid')
+            print(form.errors)
         
     form = forms.TaskForm()
     return render(request, 'base_view.html', {'form': form})
@@ -140,7 +142,6 @@ def show_task_result(request, task_id):
             for child in result.get('result')['children']:
                 child_async = AsyncResult(child['task_id'])
                 child_result = child_async._get_task_meta()
-                print(child_result)
                 data.append({
                     'task_id': child.get('task_id'),
                     'name': child_async.name,

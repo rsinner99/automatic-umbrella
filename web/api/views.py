@@ -9,7 +9,7 @@ from rest_framework import status
 
 from web.serializers import TaskSerializer
 from web.utils import reverse
-from web import tasks as common
+from hello import tasks as hello
 from scripts.views import ScriptView
 from storage.views import FileView
 
@@ -40,7 +40,7 @@ class ApiScriptStoreView(GenericAPIView):
         doc = int(kwargs.get('doc'))
         peers = kwargs.get('peers').split(',')
         filename = kwargs.get('filename')
-        result = common.run_script_output_to_storage.delay(doc, peers, filename)
+        result = hello.run_script_output_to_storage.delay(doc, peers, filename)
         resp = {
             'id': result.id,
             'state': result.state

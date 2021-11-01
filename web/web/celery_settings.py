@@ -8,7 +8,7 @@ CELERY_TASK_ROUTES =  {
     'scripts.*': {'queue': 'scripts'},
     'hello.*': {'queue': 'hello'},
     'storage.*': {'queue': 'storage'},
-    'common.*': {'queue': 'default'}
+    'pinger.*': {'queue': 'pinger'}
 }
 
 BROKER_URL = os.environ.get("BROKER_URL", "amqp://guest:guest@localhost//")

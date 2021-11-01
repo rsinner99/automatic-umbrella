@@ -1,7 +1,7 @@
 import io
 
 def is_python_installed(ssh):
-    script = 'python --version'
+    script = 'python3 --version'
     stdin, stdout, stderr = ssh.exec_command(script)
     error = stderr.read().decode().strip()
     if error:
@@ -14,14 +14,15 @@ def run_python(ssh, content):
             'output': None,
             'error': 'Python is not installed. Use Bash script to install Python on remote host.'
         }
-    mock_file = io.StringIO.StringIO(content)
-    sftp = ssh.open_sftp()
-    sftp.putfo(mock_file, '~/script.py')
-    sftp.close()
 
-    stdin, stdout, stderr = ssh.exec_command('python ~/script.py')
+    content = content.replace('"','\\"')
+    ssh.exec_command(f'echo "{content}" > ~/script.py')
+
+    stdin, stdout, stderr = ssh.exec_command('python3 ~/script.py')
     output = stdout.read().decode().strip()
     error = stderr.read().decode().strip()
+
+    ssh.exec_command('rm ~/script.py')
 
     ssh.close()
 

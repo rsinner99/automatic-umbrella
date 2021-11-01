@@ -20,7 +20,7 @@ urlpatterns = [
     path('files/', views.files, name='files'),
     path('files/create/', views.create_file, name='file_create'),
     path('files/list', views.list_files, name='file_list'),
-    path('files/view', views.view_file, name='file_view'),
+    path('files/view/<str:filename>', views.view_file, name='file_view'),
 
     path('tasks/', views.execute_task, name="tasks"),
     path('tasks/<str:task_id>', views.show_task_result, name="show_task"),
