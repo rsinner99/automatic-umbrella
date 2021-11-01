@@ -1,0 +1,36 @@
+version: "3"
+services:
+  db:
+    ports:
+      - "3302:3306"
+
+  rabbitmq:
+    ports:
+      - "5672:5672"
+
+  redis:
+    ports:
+      - "6379:6379"
+
+  flower:
+    ports: 
+      - 8888:8888
+
+  minio:
+    ports:
+      - 9000:9000
+      - 9090:9090
+
+  web:
+    command: python manage.py runserver 0.0.0.0:8000
+    ports:
+      - 8000:8000
+    env_file:
+      - ./.env.prod
+
+  frontend:
+    command: python manage.py runserver 0.0.0.0:8050
+    ports:
+      - 8050:8050
+    env_file:
+      - ./.env.prod
