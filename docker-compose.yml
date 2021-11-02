@@ -111,7 +111,7 @@ services:
       - REDIS_URL=redis://redis
       - SERVICE_NAME=hello
       - TRACING_REPORTING_HOST=jaeger-agent
-      - TRACING_REPORTING_PORT=5775
+      - TRACING_REPORTING_PORT=6831
 
   monitor:
     image: monitor_worker
@@ -142,7 +142,7 @@ services:
       - MINIO_SECURE=0
       - SERVICE_NAME=storage
       - TRACING_REPORTING_HOST=jaeger-agent
-      - TRACING_REPORTING_PORT=5775
+      - TRACING_REPORTING_PORT=6831
 
   pinger:
     image: pinger_worker

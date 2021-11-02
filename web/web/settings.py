@@ -182,7 +182,8 @@ LOGGING = {
 OPENTRACING_TRACE_ALL = True
 SERVICE_NAME = os.environ.get('SERVICE_NAME')
 
-OPENTRACING_TRACING = django_opentracing.DjangoTracing(get_tracer(SERVICE_NAME))
+DEFAULT_TRACER = get_tracer(SERVICE_NAME)
+OPENTRACING_TRACING = django_opentracing.DjangoTracing(DEFAULT_TRACER)
 celery.install_patches()
 mysqldb.install_patches()
 requests.install_patches()
