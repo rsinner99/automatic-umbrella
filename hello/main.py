@@ -1,7 +1,8 @@
+from worker import app
 from time import sleep
 from celery import group
 
-from worker import app
+
 
 @app.task(name='hello.say_hello')
 def say_hello(name: str):

@@ -1,7 +1,8 @@
+from worker import app
 from scapy.all import *
 import ipaddress
 
-from worker import app
+
 
 @app.task(name='pinger.ping_host')
 def ping_host(host: str, timeout=2):
