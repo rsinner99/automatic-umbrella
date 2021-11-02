@@ -2,3 +2,7 @@ minio
 celery
 redis
 amqp
+opentracing
+opentracing_instrumentation
+jaeger_client
+celery-opentracing

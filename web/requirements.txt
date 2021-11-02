@@ -7,3 +7,8 @@ redis
 amqp
 mysql
 gunicorn
+opentracing
+django-opentracing
+opentracing_instrumentation
+jaeger_client
+celery-opentracing
