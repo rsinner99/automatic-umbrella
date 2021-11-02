@@ -109,7 +109,7 @@ services:
       - REDIS_URL=redis://redis
       - SERVICE_NAME=hello
       - TRACING_REPORTING_HOST=jaeger-agent
-      - TRACING_REPORTING_PORT=5775
+      - TRACING_REPORTING_PORT=6831
 
   storage:
     image: storage_worker
@@ -127,7 +127,7 @@ services:
       - MINIO_SECURE=0
       - SERVICE_NAME=storage
       - TRACING_REPORTING_HOST=jaeger-agent
-      - TRACING_REPORTING_PORT=5775
+      - TRACING_REPORTING_PORT=6831
 
   pinger:
     image: pinger_worker
@@ -141,7 +141,7 @@ services:
       - REDIS_URL=redis://redis  
       - SERVICE_NAME=pinger
       - TRACING_REPORTING_HOST=jaeger-agent
-      - TRACING_REPORTING_PORT=5775
+      - TRACING_REPORTING_PORT=6831
 
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:6.3.1

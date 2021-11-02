@@ -1,9 +1,10 @@
-import os
+import os, time
 import opentracing
 from jaeger_client import Config
 
 REPORTING_HOST = os.environ.get('TRACING_REPORTING_HOST')
 REPORTING_PORT = os.environ.get('TRACING_REPORTING_PORT')
+SERVICE_NAME = os.environ.get('SERVICE_NAME')
 
 tracer_map = {}
 
@@ -35,3 +36,9 @@ def get_tracer(service='worker'):
     tracer_map[service] = tracer
     return tracer
 
+def initialize_tracing():
+    tracer = get_tracer(SERVICE_NAME)
+
+def close_tracing():
+    tracer = get_tracer(SERVICE_NAME)
+    tracer.close()

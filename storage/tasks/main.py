@@ -1,5 +1,5 @@
 from worker import app
-import os
+import os, time
 
 from store import Storage
 
@@ -37,6 +37,7 @@ def get_content(filename: str):
 
 @app.task(name='storage.list_files')
 def list_files(prefix=None, include_version=False):
+    time.sleep(2)
     store = FileStorage()
     result = store.list(prefix=None, include_version=False)
     return {
