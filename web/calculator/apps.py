@@ -1,6 +1,6 @@
 from django.apps import AppConfig
 
 
-class PingerConfig(AppConfig):
+class CalculatorConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'pinger'
+    name = 'calculator'

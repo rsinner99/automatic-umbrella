@@ -14,7 +14,7 @@ class DocForm(forms.ModelForm):
 
 class PeerForm(forms.ModelForm):
     password = forms.CharField(widget=forms.PasswordInput())
-    passphrase = forms.CharField(widget=forms.PasswordInput())
+    passphrase = forms.CharField(widget=forms.PasswordInput(), required=False)
     class Meta:
         model = scripts.Peer
         fields = '__all__'
@@ -29,7 +29,7 @@ class FileViewForm(forms.Form):
 
 class TaskForm(forms.Form):
     taskname = forms.CharField(label="Choose a task from the list!", widget=forms.Select(choices=AVAILABLE_TASKS))
-    kwargs = forms.JSONField(initial={})
+    kwargs = forms.JSONField(initial={}, required=False)
 
 class TaskResultForm(forms.Form):
     result = forms.CharField(widget=forms.Textarea(attrs={'readonly':'readonly'}))

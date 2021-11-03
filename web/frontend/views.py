@@ -1,6 +1,6 @@
 import json, time
 
-from django.http.response import HttpResponse, HttpResponseRedirect
+from django.http.response import HttpResponse, HttpResponseRedirect, HTTPResponseBadRequest
 from django.shortcuts import render, resolve_url
 from django.conf import settings
 from celery.result import AsyncResult
@@ -71,8 +71,10 @@ def doc_create(request):
         if form.is_valid():
             form.save()
             return HttpResponseRedirect(request.path)
+        else:
+            return HTTPResponseBadRequest
 
-    return render(request, 'base_view.html', {'form': form})
+    return render(request, 'create_doc.html', {'form': form})
 
 def files(request):
     form = forms.FileForm()
@@ -121,7 +123,7 @@ def view_file(request, filename):
 def execute_task(request):
     if request.method == 'POST':
         form = forms.TaskForm(request.POST)
-        if form.is_valid():
+        if form.is_valid() or (form.data['kwargs'] == {}):
             data = form.cleaned_data
             result = send_task(data['taskname'], kwargs=data['kwargs'])
             return HttpResponseRedirect(reverse('frontend:show_task', kwargs={'task_id': result.id}))

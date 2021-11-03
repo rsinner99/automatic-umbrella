@@ -8,6 +8,7 @@
 <div>
     <table>
         <tr>
+            <th>ID</th>
             <th>Hostname</th>
             <th>IP-Address</th>
             <th>Username</th>
@@ -16,6 +17,7 @@
         </tr>
         {% for peer in result %}
         <tr>
+            <th> {{ peer.pk }}</th>
             <th>
                 <a href="{% url 'frontend:peer_view' peer.pk %}">
                     {{ peer.hostname }}</a>

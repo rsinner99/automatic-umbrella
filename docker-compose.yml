@@ -39,9 +39,9 @@ services:
       - MINIO_ACCESS_KEY=access-key
       - MINIO_SECRET_KEY=secret-key
 
-  web:
+  api:
     image: web
-    hostname: web
+    hostname: api
     build: 
         context: .
         dockerfile: ./web/Dockerfile
@@ -58,13 +58,14 @@ services:
 
   frontend:
     image: web
+    hostname: frontend
     build: 
         context: .
         dockerfile: ./web/Dockerfile
     volumes:
       - ./web/:/code/
     links:
-      - web:web
+      - api:api
     depends_on:
       - db
     environment:
@@ -124,6 +125,23 @@ services:
     environment:
       - BROKER_URL=amqp://guest:guest@rabbitmq//
       - REDIS_URL=redis://redis  
+      - SERVICE_NAME=pinger
+      - TRACING_REPORTING_HOST=jaeger-agent
+      - TRACING_REPORTING_PORT=6831
+
+  calculator:
+    image: calculator_worker
+    build:
+        context: .
+        dockerfile: ./calculator/Dockerfile
+    deploy:
+        replicas: 1
+    environment:
+      - BROKER_URL=amqp://guest:guest@rabbitmq//
+      - REDIS_URL=redis://redis
+      - SERVICE_NAME=calculator
+      - TRACING_REPORTING_HOST=jaeger-agent
+      - TRACING_REPORTING_PORT=6831
 
 volumes:
   mysql-data:

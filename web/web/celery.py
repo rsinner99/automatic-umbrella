@@ -1,6 +1,7 @@
 import os
 from celery import Celery
 from . import celery_settings
+from django.conf import settings
 from django.apps import apps
 
 BROKER_URL = celery_settings.BROKER_URL

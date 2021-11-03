@@ -8,6 +8,7 @@
 <div>
     <table>
         <tr>
+            <th>ID</th>
             <th>Name</th>
             <th>Type</th>
             <th>Created</th>
@@ -16,6 +17,7 @@
         </tr>
         {% for doc in result %}
         <tr>
+            <th> {{ doc.pk }}</th>
             <th>
                 <a href="{% url 'frontend:doc_view' doc.pk %}">{{ doc.name }}</a>
             </th>

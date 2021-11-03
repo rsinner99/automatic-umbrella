@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'scripts',
     'storage',
     'pinger',
+    'calculator',
     'api',
     'frontend',
 ]

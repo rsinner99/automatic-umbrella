@@ -5,13 +5,11 @@ from rest_framework import status
 from . import tasks
 from web.serializers import TaskSerializer
 
-class PingView(GenericAPIView):
+class CalcView(GenericAPIView):
     serializer_class = TaskSerializer
     
     def post(self, request):
-        host = request.query_params.get('host', '')
-        timeout = float(request.query_params.get('timeout', 2))
-        result = tasks.ping_host.delay(host, timeout)
+        result = tasks.estimate_pi.delay()
         resp = {
             'id': result.id,
             'state': result.state
