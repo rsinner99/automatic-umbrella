@@ -1,6 +1,6 @@
 import json, time
 
-from django.http.response import HttpResponse, HttpResponseRedirect, HTTPResponseBadRequest
+from django.http.response import HttpResponse, HttpResponseRedirect, HttpResponseBadRequest
 from django.shortcuts import render, resolve_url
 from django.conf import settings
 from celery.result import AsyncResult
@@ -34,7 +34,7 @@ def doc_view(request, doc_id):
             form.save()
             return HttpResponseRedirect(request.path)
     
-    return render(request, 'base_view.html', {'form': form})
+    return render(request, 'create_doc.html', {'form': form})
 
 def peers(request):
     peers = scripts.Peer.objects.all()
@@ -50,7 +50,7 @@ def peer_view(request, peer_id):
             form.save()
             return HttpResponseRedirect(request.path)
     
-    return render(request, 'base_view.html', {'form': form})
+    return render(request, 'create_peer.html', {'form': form})
 
 def peer_create(request):
     form = forms.PeerForm()
@@ -61,7 +61,7 @@ def peer_create(request):
             form.save()
             return HttpResponseRedirect(request.path)
 
-    return render(request, 'base_view.html', {'form': form})
+    return render(request, 'create_peer.html', {'form': form})
 
 def doc_create(request):
     form = forms.DocForm()
@@ -70,9 +70,9 @@ def doc_create(request):
         form = forms.DocForm(request.POST)
         if form.is_valid():
             form.save()
-            return HttpResponseRedirect(request.path)
+            return HttpResponseRedirect(reverse('frontend:docs'))
         else:
-            return HTTPResponseBadRequest
+            return HttpResponseBadRequest()
 
     return render(request, 'create_doc.html', {'form': form})
 
@@ -97,7 +97,7 @@ def create_file(request):
             data = form.cleaned_data
             storage.put_content.delay(data['content'], data['filename'])
             return HttpResponseRedirect(reverse('frontend:files'))
-    return render(request, 'base_view.html', {'form': form})
+    return render(request, 'create_file.html', {'form': form})
 
 def list_files(request):
     task = storage.list_files.delay()
@@ -118,7 +118,7 @@ def view_file(request, filename):
             storage.put_content.delay(data['content'], data['filename'])
             return HttpResponseRedirect(reverse('frontend:files'))
     form = forms.FileViewForm(file)
-    return render(request, 'base_view.html', {'form': form})
+    return render(request, 'create_file.html', {'form': form})
 
 def execute_task(request):
     if request.method == 'POST':

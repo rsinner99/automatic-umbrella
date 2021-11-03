@@ -1,0 +1,64 @@
+{% extends 'base.html' %} {% block content %}
+
+<form method="post">
+    <div class="form-group">
+        {{ form.ip_address.errors }}
+        <label for="{{ form.ip_address.id_for_label }}">IP address</label>
+        <input type="text" value="{{ form.ip_address.value|default_if_none:'' }}" class="form-control" name="ip_address" placeholder="Enter IP address" id="id_ip_address">
+    </div>
+
+    <div class="form-group">
+        {{ form.ssh_port.errors}}
+        <label for="{{ form.ssh_port.id_for_label }}">SSH port</label>
+        <input type="number" name="ssh_port" value="{{ form.ssh_port.value|default_if_none:'22' }}" class="form-control" required id="id_ssh_port">
+    </div>
+
+    <div class="form-group">
+        {{ form.hostname.errors }}
+        <label for="{{ form.hostname.id_for_label">Hostname</label>
+        <input type="text" name="hostname" maxlength="50" value="{{ form.hostname.value|default_if_none:'' }}" required id="id_hostname" class="form-control" placeholder="Enter hostname">
+    </div>
+
+    <div class="form-group">
+        {{ form.username.errors }}
+        <label for="{{ form.username.id_for_label">Username</label>
+        <input type="text" name="username" maxlength="20" value="{{ form.username.value|default_if_none:'' }}" required id="id_username" class="form-control" placeholder="Enter username">
+    </div>
+
+    <div class="form-group">
+        {{ form.password.errors }}
+        <label for="{{ form.password.id_for_label }}">Password</label>
+        <input type="password" name="password" class="form-control" value="{{ form.password.value|default_if_none:'' }}" id="id_password" placeholder="Enter password">
+    </div>
+
+    <div class="form-group">
+        {{ form.private_key.errors }}
+        <label for="{{ form.private_key.id_for_label }}">Private key</label>
+        <textarea name="private_key" rows="5" class="form-control" id="id_private_key">{{ form.private_key.value|default_if_none:"" }}</textarea>
+    </div>
+
+    <div class="form-group">
+        {{ form.passphrase.errors }}
+        <label for="form.passphrase.label_for_id">Passphrase</label>
+        <input type="password" name="passphrase" class="form-control" value="{{ form.passphrase.value|default_if_none:'' }}" id="id_password" placeholder="Enter passphrase" id="id_passphrase">
+    </div>
+
+    <div class="form-group">
+        {{ form.os.errors }}
+        <label for="{{ form.os.id_for_label }}">Operating System</label> <select id="id_os" class="form-control" name="os">
+            {% if form.instance.os == "windows" %}
+                <option value="windows" selected>Windows</option>
+                <option value="linux">Linux</option>
+            {% else %}
+            <option value="windows">Windows</option>
+            <option value="linux" selected>Linux</option>
+            {% endif %}
+        </select>
+    </div>
+
+    <div>
+        <input type="submit" value="Save">
+    </div>
+</form>
+
+{% endblock %}

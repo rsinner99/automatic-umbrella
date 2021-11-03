@@ -1,0 +1,21 @@
+{% extends 'base.html' %} {% block content %}
+
+<form method="post">
+    <div class="form-group">
+        {{ form.filename.errors }}
+        <label for="{{ form.filename.id_for_label }}">Filename</label>
+        <input type="text" value="{{ form.filename.value|default_if_none:'' }}" class="form-control" name="filename" placeholder="Enter filename" id="id_filename">
+    </div>
+
+    <div class="form-group">
+        {{ form.content.errors }}
+        <label for="{{ form.content.id_for_label }}">Content</label>
+        <textarea name="content" rows="20" class="form-control" id="id_content" placeholder="Enter content">{{ form.content.value|default_if_none:"" }}</textarea>
+    </div>
+
+    <div>
+        <input type="submit" value="Save">
+    </div>
+</form>
+
+{% endblock %}
