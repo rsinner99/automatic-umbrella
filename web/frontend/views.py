@@ -5,6 +5,7 @@ from django.shortcuts import render, resolve_url
 from django.conf import settings
 from celery.result import AsyncResult
 from celery.execute import send_task
+from celery import current_app 
 
 from web.utils import reverse
 from . import forms
@@ -119,19 +120,11 @@ def view_file(request, filename):
             return HttpResponseRedirect(reverse('frontend:files'))
     form = forms.FileViewForm(file)
     return render(request, 'create_file.html', {'form': form})
-
-def execute_task(request):
-    if request.method == 'POST':
-        form = forms.TaskForm(request.POST)
-        if form.is_valid() or (form.data['kwargs'] == {}):
-            data = form.cleaned_data
-            result = send_task(data['taskname'], kwargs=data['kwargs'])
-            return HttpResponseRedirect(reverse('frontend:show_task', kwargs={'task_id': result.id}))
-        else :
-            print(form.errors)
         
+
+def prepare_task(request):
     form = forms.TaskForm()
-    return render(request, 'base_view.html', {'form': form})
+    return render(request, 'start_task.html', {'form': form, 'API_URL': API_URL})
     
 def show_task_result(request, task_id):
     async_result = AsyncResult(task_id)
@@ -158,4 +151,4 @@ def show_task_result(request, task_id):
     data = str(result.get('result')).replace("\\n\\r", "\n\r"), # remove escape characters
 
     form = forms.TaskResultForm({"result": data}) 
-    return render(request, 'base_view.html', {'form': form})
+    return render(request, 'task_result.html', {'form': form})

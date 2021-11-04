@@ -68,3 +68,18 @@ class ApiFileView(FileView):
         if not task_id:
             return response
         return HttpResponseRedirect(reverse('api-task-result', get={'task': task_id}))
+
+def run_task(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        taskname = data.pop('taskname')
+        result = send_task(taskname, kwargs=data)
+        response = {
+            'task_id': result.id
+        }
+        return HttpResponse(json.dumps(response), status=status.HTTP_200_OK)
+    else:
+        response = {
+            'detail': request.method + " is not allowed"
+        }
+        return HttpResponse(json.dumps(response), status=status.HTTP_405_METHOD_NOT_ALLOWED)

@@ -28,7 +28,7 @@ class FileViewForm(forms.Form):
     content = forms.CharField(widget=forms.Textarea())
 
 class TaskForm(forms.Form):
-    taskname = forms.CharField(label="Choose a task from the list!", widget=forms.Select(choices=AVAILABLE_TASKS))
+    taskname = forms.CharField(label="Choose a task from the list!", widget=forms.Select(choices=AVAILABLE_TASKS), initial="hello.say_hello")
     kwargs = forms.JSONField(initial={}, required=False)
 
 class TaskResultForm(forms.Form):

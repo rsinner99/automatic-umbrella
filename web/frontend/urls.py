@@ -22,6 +22,6 @@ urlpatterns = [
     path('files/list', views.list_files, name='file_list'),
     path('files/view/<str:filename>', views.view_file, name='file_view'),
 
-    path('tasks/', views.execute_task, name="tasks"),
+    path('tasks/', views.prepare_task, name="tasks"),
     path('tasks/<str:task_id>', views.show_task_result, name="show_task"),
 ]
