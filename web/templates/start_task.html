@@ -17,17 +17,19 @@
             "taskname": taskname
         };
         var childInputs = document.getElementById(taskname).getElementsByTagName('input');
+        var childAreas = document.getElementById(taskname).getElementsByTagName('textarea');
+        var childs = [...childInputs, ...childAreas];
 
-        for (i = 0; i < childInputs.length; i++) {
-            if (childInputs[i].name == "peers") {
-                peers = childInputs[i].value.split(",");
-                jsonData[childInputs[i].name] = peers.map(Number);
+        for (i = 0; i < childs.length; i++) {
+            if (childs[i].name == "peers") {
+                peers = childs[i].value.split(",");
+                jsonData[childs[i].name] = peers.map(Number);
                 continue
             }
-            if (isNaN(childInputs[i].value)) {
-                jsonData[childInputs[i].name] = childInputs[i].value;
+            if (isNaN(childs[i].value)) {
+                jsonData[childs[i].name] = childs[i].value;
             } else {
-                jsonData[childInputs[i].name] = parseInt(childInputs[i].value)
+                jsonData[childs[i].name] = parseInt(childs[i].value)
             }
         }
         console.log(jsonData)

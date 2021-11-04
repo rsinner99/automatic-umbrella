@@ -17,14 +17,14 @@
         </tr>
         {% for doc in result %}
         <tr>
-            <th> {{ doc.pk }}</th>
-            <th>
+            <td> {{ doc.pk }}</td>
+            <td>
                 <a href="{% url 'frontend:doc_view' doc.pk %}">{{ doc.name }}</a>
-            </th>
-            <th> {{ doc.get_type_display }}</th>
-            <th> {{ doc.created }}</th>
-            <th> {{ doc.modified }}</th>
-            <th> {{ doc.get_os_display }} </th>
+            </td>
+            <td> {{ doc.get_type_display }}</td>
+            <td> {{ doc.created }}</td>
+            <td> {{ doc.modified }}</td>
+            <td> {{ doc.get_os_display }} </td>
         </tr>
         {% endfor %}
     </table>
