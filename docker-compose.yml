@@ -26,6 +26,7 @@ services:
     environment: 
       - CELERY_BROKER_URL=amqp://guest:guest@rabbitmq:5672//
       - FLOWER_PORT=8888
+      - FLOWER_URL_PREFIX=flower
     depends_on: 
       - rabbitmq
       - redis
