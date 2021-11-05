@@ -90,7 +90,9 @@
         <a href="{% url 'frontend:docs' %}">Docs</a>
         <a href="{% url 'frontend:files' %}">Files</a>
         <a href="{% url 'frontend:tasks' %}">Tasks</a>
-        <a href="{% url 'frontend:about' %}">About</a>
+        <a href="{% url 'frontend:about' %}">About</a> {% if user.is_staff %}
+        <a href="/frontend/admin">Admin</a> {% endif %} {% if user.is_authenticated %}
+        <a href="{% url 'frontend:logout' %}">Logout</a> {% endif %}
     </div>
     {% block content %}{% endblock content %}
 </body>

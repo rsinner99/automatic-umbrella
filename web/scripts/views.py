@@ -1,6 +1,7 @@
 import json
 
 from django.http import HttpResponse
+from rest_framework.permissions import AllowAny
 from rest_framework.generics import GenericAPIView
 from rest_framework import status
 from rest_framework.viewsets import ModelViewSet

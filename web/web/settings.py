@@ -150,3 +150,25 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 EXTERNAL_API_URL = os.environ.get('EXTERNAL_API_URL')
 
 CORS_ORIGIN_ALLOW_ALL = True
+
+LOGIN_URL = '/frontend/login'
+LOGIN_REDIRECT_URL = '/frontend'
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'file': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': 'debug.log',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['file'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+    },
+}
