@@ -1,4 +1,4 @@
-import json, time
+import json, time, os
 
 from django.http.response import HttpResponse, HttpResponseRedirect, HttpResponseBadRequest
 from django.shortcuts import render, resolve_url
@@ -11,6 +11,7 @@ from web.utils import reverse
 from . import forms
 from scripts import models as scripts
 from storage import tasks as storage
+from monitor import tasks as monitor
 
 API_URL = settings.EXTERNAL_API_URL
 
@@ -19,7 +20,18 @@ DEFAULT_ARGS = {
     }
 
 def index(request):
-    return render(request, 'base.html')
+    return render(request, 'home.html')
+
+def refresh(request):
+    result = monitor.build_network_graph.delay()
+    result.get() #Todo: Logging proxy has no attribute encoding???
+    image_path = os.path.join(settings.BASE_DIR, "static/docker-graph.svg")
+    with open(image_path, 'w') as f:
+        f.write(result.result)
+    return HttpResponseRedirect(reverse('frontend:index'))
+
+def about(request):
+    return render(request, 'about.html')
 
 def docs(request):
     docs = scripts.Doc.objects.all()
