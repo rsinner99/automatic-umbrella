@@ -30,3 +30,7 @@ Deploy in a production environment (including nginx):
     docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build
 
 
+
+Creating a superuser:
+
+    docker exec -it <container_id_frontend> python manage.py createsuperuser
