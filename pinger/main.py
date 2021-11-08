@@ -4,7 +4,6 @@ import ipaddress
 
 
 
-
 @app.task(name='pinger.ping_host')
 def ping_host(host: str, timeout=2):
     packet = IP(dst=host)/ICMP()
