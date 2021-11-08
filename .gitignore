@@ -130,3 +130,6 @@ dmypy.json
 
 # docker volumes
 volumes/
+
+# app content
+web/static/docker-graph.svg

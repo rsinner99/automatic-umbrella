@@ -24,6 +24,8 @@ urlpatterns = [
     path('hello/', include('hello.urls')),
     path('scripts/', include('scripts.urls')),
     path('storage/', include('storage.urls')),
+    path('pinger/', include('pinger.urls')),
+    path('calc/', include('calculator.urls')),
     path('api/', include('api.urls')),
     path('frontend/', include('frontend.urls')),
 

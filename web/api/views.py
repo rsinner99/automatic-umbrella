@@ -3,7 +3,9 @@ import json
 from celery.result import AsyncResult
 from celery.execute import send_task 
 
+from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, HttpResponseRedirect
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.generics import GenericAPIView
 from rest_framework import status
 
@@ -19,6 +21,7 @@ MISSING_TASK_ID = {
 
 class ApiTaskView(GenericAPIView):
     serializer_class = TaskSerializer
+    permission_classes = (IsAuthenticated,)
 
     def get(self, request):
         task_id = request.query_params.get('task', None)
@@ -34,6 +37,7 @@ class ApiTaskView(GenericAPIView):
 
 class ApiScriptStoreView(GenericAPIView):
     serializer_class = TaskSerializer
+    permission_classes = (IsAuthenticated,)
 
     def post(self, request):
         kwargs = request.query_params
@@ -49,6 +53,8 @@ class ApiScriptStoreView(GenericAPIView):
 
     
 class ApiScriptView(ScriptView):
+    permission_classes = (IsAuthenticated,)
+
     def post(self, request):
         response = super().post(request)
         result = json.loads(response.content)
@@ -60,6 +66,8 @@ class ApiScriptView(ScriptView):
 
 
 class ApiFileView(FileView):
+    permission_classes = (IsAuthenticated,)
+
     def get(self, request):
         response = super().get(request)
         result = json.loads(response.content)
@@ -68,3 +76,19 @@ class ApiFileView(FileView):
         if not task_id:
             return response
         return HttpResponseRedirect(reverse('api-task-result', get={'task': task_id}))
+
+@login_required
+def run_task(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        taskname = data.pop('taskname')
+        result = send_task(taskname, kwargs=data)
+        response = {
+            'task_id': result.id
+        }
+        return HttpResponse(json.dumps(response), status=status.HTTP_200_OK)
+    else:
+        response = {
+            'detail': request.method + " is not allowed"
+        }
+        return HttpResponse(json.dumps(response), status=status.HTTP_405_METHOD_NOT_ALLOWED)

@@ -26,6 +26,7 @@ services:
     environment: 
       - CELERY_BROKER_URL=amqp://guest:guest@rabbitmq:5672//
       - FLOWER_PORT=8888
+      - FLOWER_URL_PREFIX=flower
     depends_on: 
       - rabbitmq
       - redis
@@ -39,9 +40,9 @@ services:
       - MINIO_ACCESS_KEY=access-key
       - MINIO_SECRET_KEY=secret-key
 
-  web:
+  api:
     image: web
-    hostname: web
+    hostname: api
     build: 
         context: .
         dockerfile: ./web/Dockerfile
@@ -50,7 +51,7 @@ services:
     depends_on:
       - db
     environment:
-      - DJANGO_ALLOWED_HOSTS=web localhost 192.168.84.7
+      - DJANGO_ALLOWED_HOSTS=api localhost 192.168.84.7
       - BROKER_URL=amqp://guest:guest@rabbitmq//
       - REDIS_URL=redis://redis
       - SQL_HOST=db
@@ -58,17 +59,18 @@ services:
 
   frontend:
     image: web
+    hostname: frontend
     build: 
         context: .
         dockerfile: ./web/Dockerfile
     volumes:
       - ./web/:/code/
     links:
-      - web:web
+      - api:api
     depends_on:
       - db
     environment:
-      - DJANGO_ALLOWED_HOSTS=web localhost 192.168.84.7
+      - DJANGO_ALLOWED_HOSTS=api localhost 192.168.84.7
       - BROKER_URL=amqp://guest:guest@rabbitmq//
       - REDIS_URL=redis://redis
       - SQL_HOST=db
@@ -84,7 +86,7 @@ services:
     environment:
       - BROKER_URL=amqp://guest:guest@rabbitmq//
       - REDIS_URL=redis://redis
-      - API_URL=http://web:8000/
+      - API_URL=http://api:8000/
     extra_hosts:
     - "host.docker.internal:host-gateway"
       
@@ -93,6 +95,19 @@ services:
     build:
         context: .
         dockerfile: ./hello/Dockerfile
+    deploy:
+        replicas: 1
+    environment:
+      - BROKER_URL=amqp://guest:guest@rabbitmq//
+      - REDIS_URL=redis://redis
+
+  monitor:
+    image: monitor_worker
+    build:
+        context: .
+        dockerfile: ./monitor/Dockerfile
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
     deploy:
         replicas: 1
     environment:
@@ -124,6 +139,23 @@ services:
     environment:
       - BROKER_URL=amqp://guest:guest@rabbitmq//
       - REDIS_URL=redis://redis  
+      - SERVICE_NAME=pinger
+      - TRACING_REPORTING_HOST=jaeger-agent
+      - TRACING_REPORTING_PORT=6831
+
+  calculator:
+    image: calculator_worker
+    build:
+        context: .
+        dockerfile: ./calculator/Dockerfile
+    deploy:
+        replicas: 1
+    environment:
+      - BROKER_URL=amqp://guest:guest@rabbitmq//
+      - REDIS_URL=redis://redis
+      - SERVICE_NAME=calculator
+      - TRACING_REPORTING_HOST=jaeger-agent
+      - TRACING_REPORTING_PORT=6831
 
 volumes:
   mysql-data:

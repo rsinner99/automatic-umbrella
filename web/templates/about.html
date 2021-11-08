@@ -1,0 +1,17 @@
+{% extends 'base.html' %} {% block content %} {% load static %}
+
+<style>
+    .container img {
+        display: block;
+        margin: auto;
+        height: auto;
+        max-height: 100%;
+        width: auto;
+        max-width: 100%;
+    }
+</style>
+
+<div class="container">
+    <img src="{%  static 'automatic_umbrella_architektur.svg' %}" alt="System architecture">
+</div>
+{% endblock %}

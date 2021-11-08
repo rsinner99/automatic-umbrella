@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'scripts',
     'storage',
     'pinger',
+    'calculator',
     'api',
     'frontend',
 ]
@@ -54,6 +55,7 @@ MIDDLEWARE = [
     'django.contrib.sessions.middleware.SessionMiddleware', 
     'django.middleware.common.CommonMiddleware',
 #    'django.middleware.csrf.CsrfViewMiddleware',
+    'web.middleware.DisableCSRFMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
@@ -149,3 +151,25 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 EXTERNAL_API_URL = os.environ.get('EXTERNAL_API_URL')
 
 CORS_ORIGIN_ALLOW_ALL = True
+
+LOGIN_URL = '/frontend/login'
+LOGIN_REDIRECT_URL = '/frontend'
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'file': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': 'debug.log',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['file'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+    },
+}

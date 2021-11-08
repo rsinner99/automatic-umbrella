@@ -15,15 +15,15 @@
         </tr>
         {% for child in children %}
         <tr>
-            <th>
+            <td>
                 <a href="{% url 'frontend:show_task' child.task_id %}">{{ child.task_id }}</a>
-            </th>
-            <th> {{ child.name }} </th>
-            <th> {{ child.args }} </th>
-            <th> {{ child.kwargs }} </th>
-            <th> {{ child.status }} </th>
-            <th> {{ child.worker }} </th>
-            <th> {{ child.date_done }} </th>
+            </td>
+            <td> {{ child.name }} </td>
+            <td> {{ child.args }} </td>
+            <td> {{ child.kwargs }} </td>
+            <td> {{ child.status }} </td>
+            <td> {{ child.worker }} </td>
+            <td> {{ child.date_done }} </td>
         </tr>
         {% endfor %}
     </table>

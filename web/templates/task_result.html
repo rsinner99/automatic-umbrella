@@ -1,0 +1,10 @@
+{% extends 'base.html' %} {% block content %}
+<div style="padding-left:16px">
+</div>
+<div class="form-group">
+    {{ form.result.errors }}
+    <label for="{{ form.result.id_for_label }}">Result</label>
+    <textarea name="result" rows="20" class="form-control" id="id_result">{{ form.result.value|default_if_none:"" }}</textarea>
+</div>
+
+{% endblock %}

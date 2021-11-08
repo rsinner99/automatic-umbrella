@@ -1,6 +1,6 @@
+from worker import app
 import os
 
-from worker import app
 from store import Storage
 
 class FileStorage(Storage):

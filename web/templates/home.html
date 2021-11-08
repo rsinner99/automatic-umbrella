@@ -1,0 +1,27 @@
+{% extends 'base.html' %} {% block content %} {% load static %}
+
+<script>
+    function refreshImage() {
+        window.location.href = "{% url 'frontend:refresh_graph' %}";
+    }
+</script>
+
+<style>
+    .container img {
+        display: block;
+        margin: auto;
+        height: auto;
+        max-height: 100%;
+        width: auto;
+        max-width: 100%;
+    }
+</style>
+
+<div>
+    <button onclick="refreshImage()">Refresh</button>
+</div>
+
+<div class="container">
+    <img src="{%  static 'docker-graph.svg' %}" alt="Docker Network Graph">
+</div>
+{% endblock %}

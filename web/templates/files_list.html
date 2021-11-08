@@ -24,13 +24,13 @@
         </tr>
         {% for file in result %}
         <tr>
-            <th>
+            <td>
                 <button class="file_load_button">{{ file.object_name }}</button>
-            </th>
-            <th> {{ file.last_modified }}</th>
-            <th> {{ file.content_type }}</th>
-            <th> {{ file.size }} </th>
-            <th> {{ file.version_id }} </th>
+            </td>
+            <td> {{ file.last_modified }}</td>
+            <td> {{ file.content_type }}</td>
+            <td> {{ file.size }} </td>
+            <td> {{ file.version_id }} </td>
         </tr>
         {% endfor %}
     </table>

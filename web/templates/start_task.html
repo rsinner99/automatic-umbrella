@@ -1,0 +1,144 @@
+{% extends 'base.html' %} {% block content %}
+<script>
+    var task_url = "{{ API_URL }}" + "/api/task/generic_run"
+
+    function showForm() {
+        var selection = document.getElementById("id_taskname");
+        $('div[name="choice"]').hide()
+        var taskname = selection.value;
+        console.log(taskname)
+        document.getElementById(taskname).style = "display: block;";
+    }
+
+    function runTask() {
+        var selection = document.getElementById("id_taskname");
+        var taskname = selection.value;
+        var jsonData = {
+            "taskname": taskname
+        };
+        var childInputs = document.getElementById(taskname).getElementsByTagName('input');
+        var childAreas = document.getElementById(taskname).getElementsByTagName('textarea');
+        var childs = [...childInputs, ...childAreas];
+
+        for (i = 0; i < childs.length; i++) {
+            if (childs[i].name == "peers") {
+                peers = childs[i].value.split(",");
+                jsonData[childs[i].name] = peers.map(Number);
+                continue
+            }
+            if (isNaN(childs[i].value)) {
+                jsonData[childs[i].name] = childs[i].value;
+            } else {
+                jsonData[childs[i].name] = parseInt(childs[i].value)
+            }
+        }
+        console.log(jsonData)
+
+
+        $.ajax({
+            type: "POST",
+            url: task_url,
+            data: JSON.stringify(jsonData),
+            dataType: "json",
+            success: function(data, textStatus, request) {
+                var task = data.task_id;
+                console.log(task)
+                window.location.href = "/frontend/tasks/" + task;
+            },
+            error: function(data, textStatus, request) {
+                console.log("error")
+            }
+        });
+    }
+</script>
+<style>
+    .form-group {
+        display: none;
+    }
+</style>
+
+<form>
+    <div class="form-group" style="display: block;">
+        {{ form.taskname.errors }}
+        <label for="{{ form.taskname.id_for_label }}">Task</label>
+        <select id="id_taskname" class="form-control" name="taskname" onchange="if (this.selectedIndex) showForm();">
+            <option value="-1">Choose a task</option>
+            {% for short, long in form.taskname.field.widget.choices %}
+            <option value="{{ short }}"{% if form.initial.taskname == short %} selected {% endif %}>
+                {{ long }}
+            </option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div class="form-group" id="scripts.run_script" name="choice">
+        <label>Doc by ID</label>
+        <input type="number" name="doc_id" required id="run_script_id_doc" class="form-control" placeholder="Enter doc id">
+        <label>Peers by ID (Comma separated)</label>
+        <input type="text" name="peers" required id="run_script_id_peers" class="form-control" placeholder="Enter peers">
+    </div>
+
+    <div class="form-group" id="hello.say_hello" name="choice">
+        <label>Your name</label>
+        <input type="text" name="name" required id="id_name" class="form-control" placeholder="Enter your name">
+    </div>
+
+    <div class="form-group" id="hello.run_script_output_to_storage" name="choice">
+        <label>Doc by ID</label>
+        <input type="number" name="doc_id" required id="run_script_output_to_storage_id_doc" class="form-control" placeholder="Enter doc id">
+        <label>Peers by ID (Comma separated)</label>
+        <input type="text" name="peers" required id="run_script_output_to_storage_id_peers" class="form-control" placeholder="Enter peers">
+        <label>Filename</label>
+        <input type="text" name="filename" required id="run_script_output_to_storage_id_filename" class="form-control" placeholder="Enter filename">
+    </div>
+
+    <div class="form-group" id="pinger.ping_host" name="choice">
+        <label>IP address</label>
+        <input type="text" name="host" required id="ping_host_id_host" class="form-control" placeholder="Enter IP address">
+        <label>Timeout</label>
+        <input type="number" name="timeout" id="ping_host_id_timeout" class="form-control" placeholder="2">
+    </div>
+
+    <div class="form-group" id="pinger.discover" name="choice">
+        <label>Subnet (CIDR)</label>
+        <input type="text" name="subnet" required id="discover_id_host" class="form-control" placeholder="Enter IP address">
+        <label>Timeout</label>
+        <input type="number" name="timeout" id="discover_id_timeout" class="form-control" placeholder="2">
+    </div>
+
+    <div class="form-group" id="calc.estimate_pi" name="choice">
+        <label>Interval</label>
+        <input type="number" name="interval" id="estimate_pi_id_interval" class="form-control" placeholder="1000">
+    </div>
+
+    <div class="form-group" id="storage.put_content" name="choice">
+        <label>Filename</label>
+        <input type="text" name="filename" required id="put_content_id_filename" class="form-control" placeholder="Enter filename">
+        <label>Content</label>
+        <textarea name="content" required rows="20" class="form-control" id="put_content_id_content"></textarea>
+    </div>
+
+    <div class="form-group" id="storage.get_content" name="choice">
+        <label>Filename</label>
+        <input type="text" name="filename" required id="get_content_id_filename" class="form-control" placeholder="Enter filename">
+    </div>
+
+    <div class="form-group" id="storage.put_file" name="choice">
+        <label>Filename</label>
+        <input type="text" name="filename" required id="put_file_id_filename" class="form-control" placeholder="Enter filename">
+        <label>Filepath</label>
+        <input type="text" name="filename" required id="put_file_id_filepath" class="form-control" placeholder="Enter filepath">
+    </div>
+
+    <div class="form-group" id="storage.list_files" name="choice">
+    </div>
+
+    <div class="form-group" id="monitor.build_network_graph" name="choice">
+    </div>
+
+    <div>
+        <br>
+        <input type="submit" value="Run task" onclick="runTask()">
+    </div>
+</form>
+{% endblock %}

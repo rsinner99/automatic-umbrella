@@ -1,15 +1,18 @@
-import json, time
+import json, time, os
 
-from django.http.response import HttpResponse, HttpResponseRedirect
+from django.contrib.auth.decorators import login_required
+from django.http.response import HttpResponse, HttpResponseRedirect, HttpResponseBadRequest
 from django.shortcuts import render, resolve_url
 from django.conf import settings
 from celery.result import AsyncResult
 from celery.execute import send_task
+from celery import current_app 
 
 from web.utils import reverse
 from . import forms
 from scripts import models as scripts
 from storage import tasks as storage
+from monitor import tasks as monitor
 
 API_URL = settings.EXTERNAL_API_URL
 
@@ -17,13 +20,29 @@ DEFAULT_ARGS = {
         'api_url': API_URL
     }
 
+@login_required
 def index(request):
-    return render(request, 'base.html')
+    return render(request, 'home.html')
 
+@login_required
+def refresh(request):
+    result = monitor.build_network_graph.delay()
+    result.get() #Todo: Logging proxy has no attribute encoding???
+    image_path = os.path.join(settings.BASE_DIR, "static/docker-graph.svg")
+    with open(image_path, 'w') as f:
+        f.write(result.result)
+    return HttpResponseRedirect(reverse('frontend:index'))
+
+@login_required
+def about(request):
+    return render(request, 'about.html')
+
+@login_required
 def docs(request):
     docs = scripts.Doc.objects.all()
     return render(request, 'docs.html', {'result': docs})
 
+@login_required
 def doc_view(request, doc_id):
     doc = scripts.Doc.objects.get(pk=doc_id)
     form = forms.DocForm(instance=doc)
@@ -34,12 +53,14 @@ def doc_view(request, doc_id):
             form.save()
             return HttpResponseRedirect(request.path)
     
-    return render(request, 'base_view.html', {'form': form})
+    return render(request, 'create_doc.html', {'form': form})
 
+@login_required
 def peers(request):
     peers = scripts.Peer.objects.all()
     return render(request, 'peers.html', {'result': peers})
 
+@login_required
 def peer_view(request, peer_id):
     peer = scripts.Peer.objects.get(pk=peer_id)
     form = forms.PeerForm(instance=peer)
@@ -50,8 +71,9 @@ def peer_view(request, peer_id):
             form.save()
             return HttpResponseRedirect(request.path)
     
-    return render(request, 'base_view.html', {'form': form})
+    return render(request, 'create_peer.html', {'form': form})
 
+@login_required
 def peer_create(request):
     form = forms.PeerForm()
 
@@ -61,8 +83,9 @@ def peer_create(request):
             form.save()
             return HttpResponseRedirect(request.path)
 
-    return render(request, 'base_view.html', {'form': form})
+    return render(request, 'create_peer.html', {'form': form})
 
+@login_required
 def doc_create(request):
     form = forms.DocForm()
 
@@ -70,10 +93,13 @@ def doc_create(request):
         form = forms.DocForm(request.POST)
         if form.is_valid():
             form.save()
-            return HttpResponseRedirect(request.path)
+            return HttpResponseRedirect(reverse('frontend:docs'))
+        else:
+            return HttpResponseBadRequest()
 
-    return render(request, 'base_view.html', {'form': form})
+    return render(request, 'create_doc.html', {'form': form})
 
+@login_required
 def files(request):
     form = forms.FileForm()
     if request.method == 'POST':
@@ -87,6 +113,7 @@ def files(request):
     }
     return render(request, 'files.html', {'args': DEFAULT_ARGS, 'form': form})
 
+@login_required
 def create_file(request):
     form = forms.FileForm()
     if request.method == 'POST':
@@ -95,8 +122,9 @@ def create_file(request):
             data = form.cleaned_data
             storage.put_content.delay(data['content'], data['filename'])
             return HttpResponseRedirect(reverse('frontend:files'))
-    return render(request, 'base_view.html', {'form': form})
+    return render(request, 'create_file.html', {'form': form})
 
+@login_required
 def list_files(request):
     task = storage.list_files.delay()
     task.get()
@@ -104,6 +132,7 @@ def list_files(request):
     files = result.get('result').get('files')
     return render(request, 'files_list.html', {'args': DEFAULT_ARGS, 'result': files})
 
+@login_required
 def view_file(request, filename):
     task = storage.get_content.delay(filename)
     task.get()
@@ -116,21 +145,14 @@ def view_file(request, filename):
             storage.put_content.delay(data['content'], data['filename'])
             return HttpResponseRedirect(reverse('frontend:files'))
     form = forms.FileViewForm(file)
-    return render(request, 'base_view.html', {'form': form})
-
-def execute_task(request):
-    if request.method == 'POST':
-        form = forms.TaskForm(request.POST)
-        if form.is_valid():
-            data = form.cleaned_data
-            result = send_task(data['taskname'], kwargs=data['kwargs'])
-            return HttpResponseRedirect(reverse('frontend:show_task', kwargs={'task_id': result.id}))
-        else :
-            print(form.errors)
+    return render(request, 'create_file.html', {'form': form})
         
+@login_required
+def prepare_task(request):
     form = forms.TaskForm()
-    return render(request, 'base_view.html', {'form': form})
-    
+    return render(request, 'start_task.html', {'form': form, 'API_URL': API_URL})
+
+@login_required    
 def show_task_result(request, task_id):
     async_result = AsyncResult(task_id)
     async_result.get()
@@ -156,4 +178,4 @@ def show_task_result(request, task_id):
     data = str(result.get('result')).replace("\\n\\r", "\n\r"), # remove escape characters
 
     form = forms.TaskResultForm({"result": data}) 
-    return render(request, 'base_view.html', {'form': form})
+    return render(request, 'task_result.html', {'form': form})
