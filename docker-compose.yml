@@ -193,16 +193,17 @@ services:
     volumes:
       - esdata:/usr/share/elasticsearch/data
 
-  kibana:
-    image: docker.elastic.co/kibana/kibana:6.3.1
-    ports:
-      - "5601:5601"
-    environment:
-      ELASTICSEARCH_URL: http://elasticsearch:9200
-    depends_on:
-    - elasticsearch
-    networks:
-    - elastic-jaeger
+# Kibana is not required for tracing itself
+#  kibana:
+#    image: docker.elastic.co/kibana/kibana:6.3.1
+#    ports:
+#      - "5601:5601"
+#    environment:
+#      ELASTICSEARCH_URL: http://elasticsearch:9200
+#    depends_on:
+#    - elasticsearch
+#    networks:
+#    - elastic-jaeger
 
   jaeger-collector:
     image: jaegertracing/jaeger-collector:1.7
