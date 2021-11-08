@@ -125,6 +125,9 @@ services:
     environment:
       - BROKER_URL=amqp://guest:guest@rabbitmq//
       - REDIS_URL=redis://redis
+      - SERVICE_NAME=monitor
+      - TRACING_REPORTING_HOST=jaeger-agent
+      - TRACING_REPORTING_PORT=6831
 
   storage:
     image: storage_worker
