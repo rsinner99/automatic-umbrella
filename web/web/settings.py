@@ -12,6 +12,10 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 
 import os
 from pathlib import Path
+import django_opentracing
+from opentracing_instrumentation.client_hooks import celery, mysqldb, requests
+
+from .opentracing import get_tracer
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -51,6 +55,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'django_opentracing.OpenTracingMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware', 
     'django.middleware.common.CommonMiddleware',
@@ -173,3 +178,12 @@ LOGGING = {
         },
     },
 }
+
+OPENTRACING_TRACE_ALL = True
+SERVICE_NAME = os.environ.get('SERVICE_NAME')
+
+DEFAULT_TRACER = get_tracer(SERVICE_NAME)
+OPENTRACING_TRACING = django_opentracing.DjangoTracing(DEFAULT_TRACER)
+celery.install_patches()
+mysqldb.install_patches()
+requests.install_patches()

@@ -3,3 +3,7 @@ redis
 amqp
 graphviz
 docker
+opentracing
+opentracing_instrumentation
+jaeger_client
+celery-opentracing

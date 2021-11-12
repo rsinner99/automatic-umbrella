@@ -1,7 +1,7 @@
 version: "3"
 services:
   db:
-    image: mariadb
+    image: mariadb:10.6
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: root
@@ -13,16 +13,16 @@ services:
       - mysql-data:/var/lib/mysql
 
   rabbitmq:
-    image: rabbitmq:latest
+    image: rabbitmq
     environment:
       - RABBITMQ_DEFAULT_USER=guest
       - RABBITMQ_DEFAULT_PASS=guest
 
   redis:
-    image: redis:latest
+    image: redis:6.2.6
 
   flower:
-    image: mher/flower
+    image: mher/flower:0.9.7
     environment: 
       - CELERY_BROKER_URL=amqp://guest:guest@rabbitmq:5672//
       - FLOWER_PORT=8888
@@ -56,6 +56,9 @@ services:
       - REDIS_URL=redis://redis
       - SQL_HOST=db
       - EXTERNAL_API_URL=http://192.168.84.7:8000
+      - SERVICE_NAME=api
+      - TRACING_REPORTING_HOST=jaeger-agent
+      - TRACING_REPORTING_PORT=5775
 
   frontend:
     image: web
@@ -75,6 +78,9 @@ services:
       - REDIS_URL=redis://redis
       - SQL_HOST=db
       - EXTERNAL_API_URL=http://192.168.84.7:8000
+      - SERVICE_NAME=frontend
+      - TRACING_REPORTING_HOST=jaeger-agent
+      - TRACING_REPORTING_PORT=5775
 
   scripts:
     image: scripts_worker
@@ -87,9 +93,12 @@ services:
       - BROKER_URL=amqp://guest:guest@rabbitmq//
       - REDIS_URL=redis://redis
       - API_URL=http://api:8000/
+      - SERVICE_NAME=scripts
+      - TRACING_REPORTING_HOST=jaeger-agent
+      - TRACING_REPORTING_PORT=6831
     extra_hosts:
     - "host.docker.internal:host-gateway"
-      
+
   hello:
     image: hello_worker
     build:
@@ -100,6 +109,9 @@ services:
     environment:
       - BROKER_URL=amqp://guest:guest@rabbitmq//
       - REDIS_URL=redis://redis
+      - SERVICE_NAME=hello
+      - TRACING_REPORTING_HOST=jaeger-agent
+      - TRACING_REPORTING_PORT=6831
 
   monitor:
     image: monitor_worker
@@ -113,6 +125,9 @@ services:
     environment:
       - BROKER_URL=amqp://guest:guest@rabbitmq//
       - REDIS_URL=redis://redis
+      - SERVICE_NAME=monitor
+      - TRACING_REPORTING_HOST=jaeger-agent
+      - TRACING_REPORTING_PORT=6831
 
   storage:
     image: storage_worker
@@ -128,6 +143,9 @@ services:
       - MINIO_SECRET_KEY=secret-key
       - MINIO_ENDPOINT=minio:9000
       - MINIO_SECURE=0
+      - SERVICE_NAME=storage
+      - TRACING_REPORTING_HOST=jaeger-agent
+      - TRACING_REPORTING_PORT=6831
 
   pinger:
     image: pinger_worker
@@ -157,5 +175,99 @@ services:
       - TRACING_REPORTING_HOST=jaeger-agent
       - TRACING_REPORTING_PORT=6831
 
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:6.3.1
+    networks:
+      - elastic-jaeger
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    environment:
+      - cluster.name=jaeger-cluster
+      - discovery.type=single-node
+      - http.host=0.0.0.0
+      - transport.host=127.0.0.1
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+      - xpack.security.enabled=false
+    restart: on-failure
+    volumes:
+      - esdata:/usr/share/elasticsearch/data
+
+# Kibana is not required for tracing itself
+#  kibana:
+#    image: docker.elastic.co/kibana/kibana:6.3.1
+#    ports:
+#      - "5601:5601"
+#    environment:
+#      ELASTICSEARCH_URL: http://elasticsearch:9200
+#    depends_on:
+#    - elasticsearch
+#    networks:
+#    - elastic-jaeger
+
+  jaeger-collector:
+    image: jaegertracing/jaeger-collector:1.7
+    ports:
+      - "14269:14269"
+      - "14268:14268"
+      - "14267:14267"
+      - "9411:9411"
+    networks:
+      - elastic-jaeger
+    restart: on-failure
+    environment:
+      - SPAN_STORAGE_TYPE=elasticsearch
+    command: [
+      "--es.server-urls=http://elasticsearch:9200",
+      "--es.num-shards=1",
+      "--es.num-replicas=0",
+      "--log-level=error"
+    ]
+    depends_on:
+      - elasticsearch
+
+  jaeger-agent:
+    image: jaegertracing/jaeger-agent:1.7
+    hostname: jaeger-agent
+    command: ["--collector.host-port=jaeger-collector:14267"]
+    ports:
+      - "5775:5775/udp"
+      - "6831:6831/udp"
+      - "6832:6832/udp"
+      - "5778:5778"
+    networks:
+      - default
+      - elastic-jaeger
+    restart: on-failure
+    environment:
+      - SPAN_STORAGE_TYPE=elasticsearch
+    depends_on:
+      - jaeger-collector
+
+  jaeger-query:
+    image: jaegertracing/jaeger-query:1.7
+    environment:
+      - SPAN_STORAGE_TYPE=elasticsearch
+      - no_proxy=localhost
+    ports:
+      - "16686:16686"
+      - "16687:16687"
+    networks:
+      - elastic-jaeger
+    restart: on-failure
+    command: [
+      "--es.server-urls=http://elasticsearch:9200",
+      "--span-storage.type=elasticsearch",
+      "--log-level=debug"
+    ]
+    depends_on:
+      - jaeger-agent
+
 volumes:
+  esdata:
+    driver: local
   mysql-data:
+
+networks:
+  elastic-jaeger:
+    driver: bridge 

@@ -1,9 +1,11 @@
+from worker import app
 import paramiko
 from celery import group
 
-from worker import app
+
 from utils import get_doc, get_peer_and_account, connect
 import run
+
 
 DOC_TYPE_BASH = 'sh'
 DOC_TYPE_PYTHON = 'py'
