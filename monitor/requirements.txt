@@ -1,7 +1,7 @@
 celery
 redis
 amqp
-graphviz
+graphviz<=0.17
 docker
 opentracing
 opentracing_instrumentation
