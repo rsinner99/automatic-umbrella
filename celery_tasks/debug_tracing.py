@@ -1,5 +1,5 @@
 import opentracing
-from openstracing_instrumentation.request_context import get_current_span
+from opentracing_instrumentation.request_context import get_current_span
 
 from worker import DEBUG
 
@@ -13,9 +13,9 @@ def trace_params(trace_all=False, **additional_params):
                 with span:
                     if len(args) > 0:
                         span.set_tag('input.args', args)
-                    for k, v in kwargs:
+                    for k, v in kwargs.items():
                         span.set_tag('input.{}'.format(k), v)
-                    for k, v in additional_params:
+                    for k, v in additional_params.items():
                         span.set_tag(k, v)
 
             result = func(*args, **kwargs)

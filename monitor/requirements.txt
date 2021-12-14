@@ -7,4 +7,3 @@ opentracing
 opentracing_instrumentation
 jaeger_client
 celery-opentracing
-git+https://github.com/LeoVerto/docker-network-graph.git
