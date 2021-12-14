@@ -1,7 +1,10 @@
 import random
 from worker import app
 
+from debug_tracing import trace_params
+
 @app.task(name='calc.estimate_pi')
+@trace_params(trace_all=True)
 def estimate_pi(interval=1000):
     circle_points= 0
     square_points= 0

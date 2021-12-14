@@ -2,11 +2,13 @@ from worker import app
 import os, time
 
 from store import Storage
+from debug_tracing import trace_params
 
 class FileStorage(Storage):
     name = 'files'
 
 @app.task(name='storage.put_content')
+@trace_params(trace_all=True)
 def put_content(content: str, filename: str):
     store = FileStorage()
     path = f'/tmp/{filename}'
@@ -22,6 +24,7 @@ def put_content(content: str, filename: str):
     return result
 
 @app.task(name='storage.get_content')
+@trace_params(trace_all=True)
 def get_content(filename: str):
     store = FileStorage()
     path = f'/tmp/{filename}'
@@ -36,6 +39,7 @@ def get_content(filename: str):
     }
 
 @app.task(name='storage.list_files')
+@trace_params(trace_all=True)
 def list_files(prefix=None, include_version=False):
     time.sleep(2)
     store = FileStorage()

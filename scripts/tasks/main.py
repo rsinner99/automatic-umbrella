@@ -2,6 +2,7 @@ from worker import app
 import paramiko
 from celery import group
 
+from debug_tracing import trace_params
 
 from utils import get_doc, get_peer_and_account, connect
 import run
@@ -11,6 +12,7 @@ DOC_TYPE_BASH = 'sh'
 DOC_TYPE_PYTHON = 'py'
 
 @app.task(name='scripts.run_script')
+@trace_params(trace_all=True)
 def run_script(doc_id: int, peers: list or int):
     if isinstance(peers, list):
         if len(peers) > 1:

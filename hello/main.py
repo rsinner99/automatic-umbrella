@@ -2,7 +2,7 @@ from worker import app
 from time import sleep
 from celery import group
 
-
+from debug_tracing import trace_params
 
 @app.task(name='hello.say_hello')
 def say_hello(name: str):
@@ -19,6 +19,7 @@ def run_script(doc_id, peers):
 
 
 @app.task(name='hello.run_script_output_to_storage')
+@trace_params(trace_all=True)
 def run_script_output_to_storage(doc_id: int, peers: list or int, filename: str):
     if isinstance(peers, int):
         peers = [peers]

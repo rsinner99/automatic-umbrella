@@ -7,6 +7,8 @@ from celery.signals import worker_process_init, worker_process_shutdown
 from tracing import initialize_tracing, close_tracing
 import celery_settings
 
+DEBUG = True
+
 BROKER_URL = celery_settings.BROKER_URL
 REDIS_URL = celery_settings.REDIS_URL
 
