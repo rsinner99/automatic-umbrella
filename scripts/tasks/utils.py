@@ -2,6 +2,7 @@ import paramiko
 import requests
 import io
 
+from paramiko_tracing import TracingSSHClient
 from settings import API_URL
 
 SUCCESS = 200
@@ -22,7 +23,7 @@ def get_peer_and_account(peer_id: int):
 
 def connect(peer: dict):
     errors = []
-    ssh = paramiko.SSHClient()
+    ssh = TracingSSHClient()
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
 
     host = peer.get('hostname', None)
