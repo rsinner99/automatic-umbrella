@@ -7,8 +7,12 @@ build-all:
   trigger:
     include: build.gitlab-ci.yml
 
+    #e2e-tests:
+    #  stage: test
+    #  trigger:
+    #    include: e2e.gitlab-ci.yml
+
 e2e-tests:
   stage: test
-  trigger:
-    include: e2e.gitlab-ci.yml
-
+  script:
+    - curl "http://192.168.84.7/"
