@@ -14,5 +14,8 @@ build-all:
 
 e2e-tests:
   stage: test
+  before_script:
+    - apk update
+    - apk add curl
   script:
     - curl "http://192.168.84.7/"
