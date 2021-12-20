@@ -27,7 +27,7 @@ e2e-tests:
     - apk update
     - apk add curl
     - python -m pip install --upgrade pip
-    - python -m pip install -r ./e2e_tests/requirements.txt
   script:
+    - python -m pip install -r ./e2e_tests/requirements.txt
     - curl "http://192.168.84.7/" # verify app is running
     - python -m e2e_tests.test_login
