@@ -38,8 +38,6 @@ deploy-staging:
 e2e-tests:
   stage: e2e
   image: python:3.7
-  before_script:
-    - make install
   script:
     - pytest -vvv --driver Remote --capability browserName chrome --host selenium --port 4444 e2e_tests/test_login.py
   services:
