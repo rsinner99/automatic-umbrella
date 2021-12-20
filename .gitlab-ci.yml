@@ -7,11 +7,7 @@ build-docker:
   stage: build
   trigger:
     include: build.gitlab-ci.yml
-
-    #e2e-tests:
-    #  stage: test
-    #  trigger:
-    #    include: e2e.gitlab-ci.yml
+  when: manual
 
 deploy-staging:
   image: jonaskello/docker-and-compose:1.12.1-1.8.0
@@ -23,12 +19,15 @@ deploy-staging:
   only:
     - master
   variables:
-          DOCKER_HOST: "unix:///var/run/docker.sock"
+    DOCKER_HOST: "unix:///var/run/docker.sock"
 
 e2e-tests:
   stage: e2e
   before_script:
     - apk update
     - apk add curl
+    - python -m pip install --upgrade pip
+    - python -m pip install -r ./e2e_tests/requirements.txt
   script:
-    - curl "http://192.168.84.7/"
+    - curl "http://192.168.84.7/" # verify app is running
+    - python -m e2e_tests.test_login
