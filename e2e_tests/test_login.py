@@ -7,6 +7,7 @@ from selenium import webdriver
 from selenium.webdriver.support.ui import Select
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
+from selenium.webdriver.chrome.options import Options
 
 #from testrunners.base import Runner
 from unittest import TestCase as Runner
@@ -19,7 +20,9 @@ class TestSelenium1(Runner):
     def test_neu(self):
         logger.debug('Test1...')
         s=Service(ChromeDriverManager().install())
-        driver = webdriver.Chrome(service=s)
+        options = Options()
+        options.headless = True
+        driver = webdriver.Chrome(service=s, options=options)
         driver.get("http://192.168.84.7/frontend/")
         assert "Umbrella" in driver.title
         driver.close()
