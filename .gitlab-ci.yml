@@ -39,6 +39,7 @@ e2e-tests:
   stage: e2e
   image: python:3.7
   script:
+    - python -m pip install -r ./e2e_tests/requirements.txt
     - pytest -vvv --driver Remote --capability browserName chrome --host selenium --port 4444 e2e_tests/test_login.py
   services:
     - name: selenium/standalone-chrome
