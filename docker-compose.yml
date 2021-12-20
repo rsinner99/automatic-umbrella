@@ -87,8 +87,6 @@ services:
     build:
       context: .
       dockerfile: ./scripts/Dockerfile
-    deploy:
-      replicas: 1
     environment:
       - BROKER_URL=amqp://guest:guest@rabbitmq//
       - REDIS_URL=redis://redis
@@ -104,8 +102,6 @@ services:
     build:
         context: .
         dockerfile: ./hello/Dockerfile
-    deploy:
-        replicas: 1
     environment:
       - BROKER_URL=amqp://guest:guest@rabbitmq//
       - REDIS_URL=redis://redis
@@ -120,8 +116,6 @@ services:
         dockerfile: ./monitor/Dockerfile
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-    deploy:
-        replicas: 1
     environment:
       - BROKER_URL=amqp://guest:guest@rabbitmq//
       - REDIS_URL=redis://redis
@@ -134,8 +128,6 @@ services:
     build:
       context: .
       dockerfile: ./storage/Dockerfile
-    deploy:
-      replicas: 1
     environment:
       - BROKER_URL=amqp://guest:guest@rabbitmq//
       - REDIS_URL=redis://redis
@@ -152,8 +144,6 @@ services:
     build:
         context: .
         dockerfile: ./pinger/Dockerfile
-    deploy:
-        replicas: 1
     environment:
       - BROKER_URL=amqp://guest:guest@rabbitmq//
       - REDIS_URL=redis://redis  
@@ -166,8 +156,6 @@ services:
     build:
         context: .
         dockerfile: ./calculator/Dockerfile
-    deploy:
-        replicas: 1
     environment:
       - BROKER_URL=amqp://guest:guest@rabbitmq//
       - REDIS_URL=redis://redis
