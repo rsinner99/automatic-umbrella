@@ -25,7 +25,7 @@ e2e-tests:
   stage: e2e
   before_script:
     - apk update
-    - apk add curl musl-dev gcc
+    - apk add curl musl-dev gcc libffi-dev
     - python -m pip install --upgrade pip
   script:
     - python -m pip install -r ./e2e_tests/requirements.txt
