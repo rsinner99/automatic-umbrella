@@ -20,9 +20,10 @@ class TestSelenium1(Runner):
     def test_neu(self):
         logger.debug('Test1...')
         s=Service(ChromeDriverManager().install())
-        options = Options()
-        options.headless = True
-        driver = webdriver.Chrome(service=s, options=options)
+        chrome_options = Options()
+        chrome_options.add_argument("--no-sandbox")
+        chrome_options.add_argument("--headless")
+        driver = webdriver.Chrome(options=chrome_options)
         driver.get("http://192.168.84.7/frontend/")
         assert "Umbrella" in driver.title
         driver.close()
