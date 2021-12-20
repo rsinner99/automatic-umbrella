@@ -7,6 +7,8 @@ build-docker:
   stage: build
   trigger:
     include: build.gitlab-ci.yml
+  only:
+    - master
   when: manual
 
 deploy-staging:
@@ -16,21 +18,30 @@ deploy-staging:
     - docker-compose -f docker-compose.yml -f docker-compose.prod.yml build
     - docker-compose -f docker-compose.yml -f docker-compose.prod.yml down
     - docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d --force-recreate
-  only:
-    - master
   variables:
     DOCKER_HOST: "unix:///var/run/docker.sock"
 
+    #e2e-tests:
+    #  stage: e2e
+    #  services:
+    #    - selenium/standalone-chrome
+    #  before_script:
+    #    - apk update
+    #    - apk add curl musl-dev gcc libffi-dev chromium chromium-chromedriver
+    #    - export PATH=$PATH:$HOME/bin
+    #    - python -m pip install --upgrade pip
+    #  script:
+    #    - python -m pip install -r ./e2e_tests/requirements.txt
+    #    - curl "http://192.168.84.7/" # verify app is running
+    #    - python -m e2e_tests.test_login
+
 e2e-tests:
   stage: e2e
-  services:
-    - selenium/standalone-chrome
+  image: python:3.7
   before_script:
-    - apk update
-    - apk add curl musl-dev gcc libffi-dev chromium chromium-chromedriver
-    - export PATH=$PATH:$HOME/bin
-    - python -m pip install --upgrade pip
+    - make install
   script:
-    - python -m pip install -r ./e2e_tests/requirements.txt
-    - curl "http://192.168.84.7/" # verify app is running
-    - python -m e2e_tests.test_login
+    - pytest -vvv --driver Remote --capability browserName chrome --host selenium --port 4444 e2e_tests/test_login.py
+  services:
+    - name: selenium/standalone-chrome
+      alias: selenium
