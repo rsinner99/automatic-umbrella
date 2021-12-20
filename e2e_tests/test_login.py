@@ -6,7 +6,6 @@ import time
 from selenium import webdriver
 from selenium.webdriver.support.ui import Select
 from selenium.webdriver.chrome.service import Service
-from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.chrome.options import Options
 
 #from testrunners.base import Runner
@@ -19,7 +18,6 @@ class TestSelenium1(Runner):
     
     def test_neu(self):
         logger.debug('Test1...')
-        s=Service(ChromeDriverManager().install())
         chrome_options = Options()
         chrome_options.add_argument("--no-sandbox")
         chrome_options.add_argument("--headless")
@@ -32,8 +30,10 @@ class TestSeleniumTest2(Runner):
 
     def test_2(self):
         logger.debug('Test2...')
-        s=Service(ChromeDriverManager().install())
-        driver = webdriver.Chrome(service=s)
+        chrome_options = Options()
+        chrome_options.add_argument("--no-sandbox")
+        chrome_options.add_argument("--headless")
+        driver = webdriver.Chrome(options=chrome_options)
         driver.get("http://192.168.84.7/frontend/")
         assert "Umbrella" not in driver.title
         driver.close()
@@ -42,10 +42,10 @@ class TestSeleniumTest3(Runner):
 
     def test_3(self):
         logger.debug('Test3...')
-        options = webdriver.ChromeOptions()
-        #options.add_experimental_option("detach", True)
-        s=Service(ChromeDriverManager().install())
-        driver = webdriver.Chrome(service=s, chrome_options=options)
+        chrome_options = Options()
+        chrome_options.add_argument("--no-sandbox")
+        chrome_options.add_argument("--headless")
+        driver = webdriver.Chrome(options=chrome_options)
         driver.get("http://192.168.84.7/frontend/login")
         assert "Umbrella" in driver.title
         driver.find_element_by_name('username').send_keys('test')
@@ -63,10 +63,10 @@ class ScriptNotFoundTest(Runner):
 
     def test_4(self):
         logger.debug('ScriptNotFoundTest...')
-        options = webdriver.ChromeOptions()
-        #options.add_experimental_option("detach", True)
-        s=Service(ChromeDriverManager().install())
-        driver = webdriver.Chrome(service=s, chrome_options=options)
+        chrome_options = Options()
+        chrome_options.add_argument("--no-sandbox")
+        chrome_options.add_argument("--headless")
+        driver = webdriver.Chrome(options=chrome_options)
         driver.get("http://192.168.84.7/frontend/login")
         assert "Umbrella" in driver.title
         driver.find_element_by_name('username').send_keys('test')
@@ -88,8 +88,11 @@ class ScriptNotFoundTest(Runner):
 
 class NewScriptNotFoundTest(Runner):
     def setUp(self) -> None:
-        s=Service(ChromeDriverManager().install())
-        self.driver = webdriver.Chrome(service=s)
+        chrome_options = Options()
+        chrome_options.add_argument("--no-sandbox")
+        chrome_options.add_argument("--headless")
+        self.driver = webdriver.Chrome(options=chrome_options)
+
         self.driver.get("http://192.168.84.7/frontend/login")
         self.driver.find_element_by_name('username').send_keys('test')
         self.driver.find_element_by_name('password').send_keys('test1234test')
