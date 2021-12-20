@@ -1,8 +1,9 @@
 stages:
-    - test
+    - staging
+    - e2e
     - build
 
-build-all:
+build-docker:
   stage: build
   trigger:
     include: build.gitlab-ci.yml
@@ -12,8 +13,25 @@ build-all:
     #  trigger:
     #    include: e2e.gitlab-ci.yml
 
+deploy-staging:
+  image: jonaskello/docker-and-compose:1.12.1-1.8.0
+  stage: staging
+  script:
+    - mkdir $DOCKER_CERT_PATH
+    - docker-compose -f docker-compose.yml -f docker-compose.prod.yml build
+    - docker-compose -f docker-compose.yml -f docker-compose.prod.yml down
+    - docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d --force-recreate
+  only:
+    - master
+  variables:
+    DOCKER_TLS_VERIFY: "1"
+    DOCKER_HOST: "tcp://192.168.84.7:2376"
+    DOCKER_CERT_PATH: "certs"
+  tags:
+    - docker
+
 e2e-tests:
-  stage: test
+  stage: e2e
   before_script:
     - apk update
     - apk add curl
