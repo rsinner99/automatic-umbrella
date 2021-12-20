@@ -12,3 +12,4 @@ django-opentracing
 opentracing_instrumentation
 jaeger_client
 celery-opentracing
+gunicorn==20.1.0

@@ -1,0 +1,133 @@
+stages:
+    - test
+
+variables:
+    EXTERNAL_API_URL: "http://192.168.84.7:80"
+    CELERY_BROKER_URL: "amqp://guest:guest@rabbitmq:5672//"
+    BROKER_URL: "amqp://guest:guest@rabbitmq//"
+    REDIS_URL: "redis://redis"
+    TRACING_REPORTING_HOST: "jaeger-agent"
+    API_URL: "http://api:8000/"
+
+before_script:
+  - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+
+e2e-tests:
+   image: ubuntu:20.04
+   stage: test
+   services:
+      - name: mariadb:10.6
+        alias: db
+        variables:
+            MYSQL_ROOT_PASSWORD: "root"
+            MYSQL_DATABASE: "umbrella"
+            MYSQL_USER: "user"
+            MYSQL_PASSWORD: "user"
+      - name: rabbitmq:3.9.11
+        alias: rabbitmq
+        variables:
+            RABBITMQ_DEFAULT_USER: "guest"
+            RABBITMQ_DEFAULT_PASS: "guest"
+      - name: redis:6.2.6
+        alias: redis
+      - name: mher/flower:0.9.7
+        alias: flower
+        variables:
+            FLOWER_PORT: 8888
+            FLOWER_URL_PREFIX: flower
+      - name: minio/minio
+        alias: minio
+        command: ["server /export --console-address ':9090'"]
+        variables:
+            MINIO_ACCESS_KEY: "access-key"
+            MINIO_SECRET_KEY: "secret-key"
+      - name: docker.elastic.co/elasticsearch/elasticsearch:6.3.1
+        alias: elasticsearch
+        variables:
+            cluster.name: "jaeger-cluster"
+            discovery.type: "single-node"
+            http.host: "0.0.0.0"
+            transport.host: "127.0.0.1"
+            ES_JAVA_OPTS: "-Xms512m -Xmx512m"
+            xpack.security.enabled: "false"
+      - name: jaegertracing/jaeger-collector:1.7
+        alias: jaeger-collector
+        command: [
+            "--es.server-urls=http://elasticsearch:9200",
+            "--es.num-shards=1",
+            "--es.num-replicas=0",
+            "--log-level=error"
+        ]
+        variables:
+            SPAN_STORAGE_TYPE: "elasticsearch"
+      - name: jaegertracing/jaeger-agent:1.7
+        alias: jaeger-agent
+        command: ["--collector.host-port=jaeger-collector:14267"]
+        variables:
+            SPAN_STORAGE_TYPE: "elasticsearch"
+      - name: jaegertracing/jaeger-query:1.7
+        alias: jaeger-query
+        command: [
+            "--es.server-urls=http://elasticsearch:9200",
+            "--span-storage.type=elasticsearch",
+            "--log-level=debug"
+        ]
+        variables:
+            SPAN_STORAGE_TYPE: "elasticsearch"
+            no_proxy: "localhost"
+      - name:  $CI_REGISTRY/rsinner99/automatic-umbrella/web
+        alias: api
+        command: ["sh ./startup.sh -p 8000"]
+        variables:
+            SQL_HOST: "db"
+            SERVICE_NAME: "api"
+            TRACING_REPORTING_PORT: "5775"
+            DJANGO_ALLOWED_HOSTS: "api localhost 192.168.84.7"
+      - name: $CI_REGISTRY/rsinner99/automatic-umbrella/web
+        alias: frontend
+        command: ["sh ./startup.sh -p 8050"]
+        variables:
+            SQL_HOST: "db"
+            SERVICE_NAME: "api"
+            TRACING_REPORTING_PORT: "5775"
+            DJANGO_ALLOWED_HOSTS: "api localhost 192.168.84.7"        
+      - name: $CI_REGISTRY/rsinner99/automatic-umbrella/scripts
+        alias: scripts
+        variables:
+            API_URL: "http://api:8000/"
+            SERVICE_NAME: "scripts"
+            TRACING_REPORTING_PORT: "6831"
+      - name: $CI_REGISTRY/rsinner99/automatic-umbrella/storage
+        alias: storage
+        variables:
+            SERVICE_NAME: "storage"
+            TRACING_REPORTING_PORT: "6831"
+            MINIO_ACCESS_KEY: "access-key"
+            MINIO_SECRET_KEY: "secret-key"
+            MINIO_ENDPOINT: "minio:9000"
+            MINIO_SECURE: "0"
+      - name: $CI_REGISTRY/rsinner99/automatic-umbrella/hello
+        alias: hello
+        variables:
+            SERVICE_NAME: "hello"
+            TRACING_REPORTING_PORT: "6831"
+      - name: $CI_REGISTRY/rsinner99/automatic-umbrella/monitor
+        alias: monitor
+        variables:
+            SERVICE_NAME: "monitor"
+            TRACING_REPORTING_PORT: "6831"
+      - name: $CI_REGISTRY/rsinner99/automatic-umbrella/pinger
+        alias: pinger
+        variables:
+            SERVICE_NAME: "pinger"
+            TRACING_REPORTING_PORT: "6831"
+      - name: $CI_REGISTRY/rsinner99/automatic-umbrella/calculator
+        alias: calculator
+        variables:
+            SERVICE_NAME: "calculator"
+            TRACING_REPORTING_PORT: "6831"
+      - name: $CI_REGISTRY/rsinner99/automatic-umbrella/nginx
+        alias: nginx
+   script:
+      - curl http://server:80
+

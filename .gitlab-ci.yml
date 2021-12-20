@@ -1,0 +1,14 @@
+stages:
+    - test
+    - build
+
+build-all:
+  stage: build
+  trigger:
+    include: build.gitlab-ci.yml
+
+e2e-tests:
+  stage: test
+  trigger:
+    include: e2e.gitlab-ci.yml
+
