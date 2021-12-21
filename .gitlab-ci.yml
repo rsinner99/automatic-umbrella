@@ -30,7 +30,7 @@ e2e-tests:
     RCA_REPORT_DIR: "reports"
   before_script:
     - apk update
-    - apk add curl musl-dev gcc libffi-dev chromium chromium-chromedriver
+    - apk add curl musl-dev gcc libffi-dev chromium chromium-chromedriver git
     - export PATH=/usr/bin/chromedriver:$PATH
     - python -m pip install --upgrade pip
   script:
