@@ -8,8 +8,8 @@ from selenium.webdriver.support.ui import Select
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 
-#from testrunners.base import Runner
-from unittest import TestCase as Runner
+from tracing_rca.testsuite.base import Runner
+#from unittest import TestCase as Runner
 
 logger = logging.getLogger("testrunners.selenium")
 logger.setLevel(logging.DEBUG)
