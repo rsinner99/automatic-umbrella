@@ -32,7 +32,7 @@ e2e-tests:
     - apk update
     - apk add curl musl-dev gcc libffi-dev chromium chromium-chromedriver git
     - export PATH=/usr/bin/chromedriver:$PATH
-    - python -m pip install --upgrade pip
+    - python -m pip install -U pip setuptools
   script:
     - python -m pip install -r ./e2e_tests/requirements.txt
     - curl "http://192.168.84.7/" # verify app is running
