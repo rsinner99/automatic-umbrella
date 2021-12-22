@@ -30,7 +30,7 @@ e2e-tests:
     RCA_REPORT_DIR: "reports"
   before_script:
     - apt update
-    - apt install python3-pip curl musl-dev gcc libffi-dev chromium-chromedriver
+    - apt install -Y python3-pip curl musl-dev gcc libffi-dev chromium-chromedriver
     - export PATH=/usr/bin/chromedriver:$PATH
     - python3 -m pip install -U pip setuptools
   script:
