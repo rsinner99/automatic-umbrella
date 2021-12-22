@@ -29,15 +29,15 @@ e2e-tests:
     RCA_CSV_PATH: "test_results.csv"
     RCA_REPORT_DIR: "reports"
   before_script:
-    - apk update
-    - apk add curl musl-dev gcc libffi-dev chromium chromium-chromedriver git
+    - apt update
+    - apt install python3-pip curl musl-dev gcc libffi-dev chromium chromium-chromedriver git
     - export PATH=/usr/bin/chromedriver:$PATH
-    - python -m pip install -U pip setuptools
+    - python3 -m pip install -U pip setuptools
   script:
-    - python -m pip install -r ./e2e_tests/requirements.txt
+    - python3 -m pip install -r ./e2e_tests/requirements.txt
     - curl "http://192.168.84.7/" # verify app is running
     - mkdir reports
-    - python -m e2e_tests.test_login
+    - python3 -m e2e_tests.test_login
     - TracingRCA
   artifacts:
     paths:
