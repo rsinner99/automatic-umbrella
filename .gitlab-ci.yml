@@ -29,8 +29,8 @@ e2e-tests:
     RCA_CSV_PATH: "test_results.csv"
     RCA_REPORT_DIR: "reports"
   before_script:
-    - apk update
-    - apk add curl musl-dev gcc libffi-dev chromium chromium-chromedriver git
+    - apt-get update
+    - apt-get install -y curl musl-dev gcc libffi-dev chromium-driver
     - export PATH=/usr/bin/chromedriver:$PATH
     - python -m pip install -U pip setuptools
   script:
