@@ -44,4 +44,5 @@ e2e-tests:
     when: always
     paths:
     - reports/
+    - test_results.csv
     expire_in: 1 week
