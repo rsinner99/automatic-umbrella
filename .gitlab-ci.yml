@@ -33,7 +33,7 @@ e2e-tests:
     - apk add curl musl-dev gcc libffi-dev chromium chromium-chromedriver git
     - export PATH=/usr/bin/chromedriver:$PATH
     - python -m pip install -U pip setuptools
-    - python -m pip install -e git+https://github.com/rsinner99/TracingRCA
+    - python -m pip install -e git+https://github.com/rsinner99/TracingRCA#egg=TracingRCA
   script:
     - python -m pip install -r ./e2e_tests/requirements.txt
     - curl "http://192.168.84.7/" # verify app is running
