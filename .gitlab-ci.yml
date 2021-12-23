@@ -43,6 +43,6 @@ e2e-tests:
   artifacts:
     when: always
     paths:
-    - reports/
+    - reports/*.html
     - test_results.csv
     expire_in: 1 week
