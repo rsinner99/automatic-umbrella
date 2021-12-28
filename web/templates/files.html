@@ -82,9 +82,9 @@
     <form>
         <button class="tablinks" id="list_files_button" formaction="{% url 'frontend:file_list' %}">List all files</button>
     </form>
-    <button class="tablinks" onclick="showFileSearchForm()">View file</button>
+    <button class="tablinks" id="view_file_button" onclick="showFileSearchForm()">View file</button>
     <form>
-        <button class="tablinks" formaction="{% url 'frontend:file_create' %}">Create new file</button>
+        <button class="tablinks" id="create_file_button" formaction="{% url 'frontend:file_create' %}">Create new file</button>
     </form>
 </div>
 
