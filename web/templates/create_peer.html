@@ -40,7 +40,7 @@
     <div class="form-group">
         {{ form.passphrase.errors }}
         <label for="form.passphrase.label_for_id">Passphrase</label>
-        <input type="password" name="passphrase" class="form-control" value="{{ form.passphrase.value|default_if_none:'' }}" id="id_password" placeholder="Enter passphrase" id="id_passphrase">
+        <input type="password" name="passphrase" class="form-control" value="{{ form.passphrase.value|default_if_none:'' }}" placeholder="Enter passphrase" id="id_passphrase">
     </div>
 
     <div class="form-group">
