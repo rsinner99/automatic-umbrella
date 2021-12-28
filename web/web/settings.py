@@ -58,11 +58,12 @@ MIDDLEWARE = [
     'django_opentracing.OpenTracingMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware', 
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'web.middleware.JWTAuthenticationMiddleware',
     'django.middleware.common.CommonMiddleware',
 #    'django.middleware.csrf.CsrfViewMiddleware',
     'web.middleware.DisableCSRFMiddleware',
     'corsheaders.middleware.CorsMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]

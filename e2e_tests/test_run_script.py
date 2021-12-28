@@ -32,7 +32,9 @@ class RunScriptTestValid(Runner):
         return super().setUp()
 
     def tearDown(self) -> None:
-        #self.driver.close()
+        self.driver.get("http://192.168.84.7/frontend/")
+        self.driver.find_element(By.LINK_TEXT, 'Logout')
+        self.driver.close()
         return super().tearDown()
 
     def test(self):
