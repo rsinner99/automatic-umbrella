@@ -38,6 +38,7 @@ e2e-tests:
     - curl "http://192.168.84.7/" # verify app is running
     - mkdir reports
     - python -m e2e_tests.test_login
+    - python -m e2e_tests.test_run_script
   after_script:
     - TracingRCA
   artifacts:
