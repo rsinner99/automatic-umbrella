@@ -21,7 +21,7 @@ class PingTaskApiTest(Runner):
     def setUp(self):
         token = get_token('test', 'test1234test')
         self.header = {
-            'Authorization:' 'Bearer ' + token
+            'Authorization': 'Bearer ' + token
         }
 
     def test_task(self):

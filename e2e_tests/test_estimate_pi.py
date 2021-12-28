@@ -43,7 +43,7 @@ class EstimatePiTestValid(Runner):
         self.driver.get("http://192.168.84.7/frontend/")
         self.driver.find_element(By.LINK_TEXT, 'Tasks').click()
         task_choice = Select(self.driver.find_element(By.ID, "id_taskname"))
-        task_choice.select_by_value("cal.estimate_pi")
+        task_choice.select_by_value("calc.estimate_pi")
 
         self.driver.find_element(By.ID, "estimate_pi_id_interval").send_keys('1000')
 
@@ -81,7 +81,7 @@ class EstimatePiTestTimeout(Runner):
         self.driver.get("http://192.168.84.7/frontend/")
         self.driver.find_element(By.LINK_TEXT, 'Tasks').click()
         task_choice = Select(self.driver.find_element(By.ID, "id_taskname"))
-        task_choice.select_by_value("cal.estimate_pi")
+        task_choice.select_by_value("calc.estimate_pi")
 
         self.driver.find_element(By.ID, "estimate_pi_id_interval").send_keys('10000')
 
