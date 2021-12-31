@@ -4,6 +4,6 @@ amqp
 paramiko
 requests
 opentracing
-opentracing_instrumentation
+git+https://github.com/rsinner99/opentracing-python-instrumentation.git
 jaeger_client
 celery-opentracing

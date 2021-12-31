@@ -1,8 +1,8 @@
 # pull official base image
-FROM python:3.9.6-alpine
+FROM python:3.9.6-buster
 
-RUN apk update
-RUN apk add musl-dev mariadb-dev gcc
+RUN apt-get update
+RUN apt-get install -y musl-dev libmariadb-dev gcc
 
 # set work directory
 RUN mkdir /code
@@ -13,10 +13,7 @@ ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
 # install dependencies
-RUN pip install virtualenv
-RUN virtualenv venv
 RUN pip install --upgrade pip
-RUN source venv/bin/activate
 COPY ./web/requirements.txt ./requirements.txt
 RUN pip install -r requirements.txt
 

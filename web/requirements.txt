@@ -9,7 +9,7 @@ mysql
 gunicorn
 opentracing
 django-opentracing
-opentracing_instrumentation
+git+https://github.com/rsinner99/opentracing-python-instrumentation.git
 jaeger_client
 celery-opentracing
 gunicorn==20.1.0
