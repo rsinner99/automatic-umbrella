@@ -15,7 +15,7 @@ logger = logging.getLogger("testrunners.selenium")
 logger.setLevel(logging.DEBUG)
 
 
-class PingHostTestValid(Runner):
+class DiscoverTestValid(Runner):
     def setUp(self) -> None:
         chrome_options = Options()
         chrome_options.add_argument("--no-sandbox")
@@ -43,10 +43,10 @@ class PingHostTestValid(Runner):
         self.driver.get("http://192.168.84.7/frontend/")
         self.driver.find_element(By.LINK_TEXT, 'Tasks').click()
         task_choice = Select(self.driver.find_element(By.ID, "id_taskname"))
-        task_choice.select_by_value("pinger.ping_host")
+        task_choice.select_by_value("pinger.discover")
 
-        self.driver.find_element(By.ID, "ping_host_id_host").send_keys('172.17.0.0/30')
-        self.driver.find_element(By.ID, "ping_host_id_timeout").send_keys('1')
+        self.driver.find_element(By.ID, "discover_id_host").send_keys('172.17.0.0/30')
+        self.driver.find_element(By.ID, "discover_id_timeout").send_keys('1')
 
         self.driver.find_element_by_xpath("//input[@value='Run task']").click()
         time.sleep(10)
@@ -54,7 +54,7 @@ class PingHostTestValid(Runner):
         assert "172.17.0.1" in output
         
 
-class PingHostTestInvalid(Runner):
+class DiscoverTestInvalid(Runner):
     def setUp(self) -> None:
         chrome_options = Options()
         chrome_options.add_argument("--no-sandbox")
@@ -82,10 +82,10 @@ class PingHostTestInvalid(Runner):
         self.driver.get("http://192.168.84.7/frontend/")
         self.driver.find_element(By.LINK_TEXT, 'Tasks').click()
         task_choice = Select(self.driver.find_element(By.ID, "id_taskname"))
-        task_choice.select_by_value("pinger.ping_host")
+        task_choice.select_by_value("pinger.discover")
 
-        self.driver.find_element(By.ID, "ping_host_id_host").send_keys('172.17.1...3')
-        self.driver.find_element(By.ID, "ping_host_id_timeout").send_keys('1')
+        self.driver.find_element(By.ID, "discover_id_host").send_keys('172.17.1...3/47')
+        self.driver.find_element(By.ID, "discover_id_timeout").send_keys('1')
 
         self.driver.find_element_by_xpath("//input[@value='Run task']").click()
         time.sleep(10)
@@ -93,7 +93,7 @@ class PingHostTestInvalid(Runner):
         assert "172.17.0.1" in output
 
 
-class PingHostTestInvalid2(Runner):
+class DiscoverTestInvalid2(Runner):
     def setUp(self) -> None:
         chrome_options = Options()
         chrome_options.add_argument("--no-sandbox")
@@ -121,10 +121,10 @@ class PingHostTestInvalid2(Runner):
         self.driver.get("http://192.168.84.7/frontend/")
         self.driver.find_element(By.LINK_TEXT, 'Tasks').click()
         task_choice = Select(self.driver.find_element(By.ID, "id_taskname"))
-        task_choice.select_by_value("pinger.ping_host")
+        task_choice.select_by_value("pinger.discover")
 
-        self.driver.find_element(By.ID, "ping_host_id_host").send_keys('172.17.0.1')
-        self.driver.find_element(By.ID, "ping_host_id_timeout").send_keys('SHOULD BE A NUMBER')
+        self.driver.find_element(By.ID, "discover_id_host").send_keys('172.17.0.1')
+        self.driver.find_element(By.ID, "discover_id_timeout").send_keys('SHOULD BE A NUMBER')
 
         self.driver.find_element_by_xpath("//input[@value='Run task']").click()
         time.sleep(10)

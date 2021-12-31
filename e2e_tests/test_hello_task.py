@@ -15,7 +15,7 @@ logger = logging.getLogger("testrunners.selenium")
 logger.setLevel(logging.DEBUG)
 
 
-class CreateFileTestValid(Runner):
+class HelloTestValid(Runner):
     def setUp(self) -> None:
         chrome_options = Options()
         chrome_options.add_argument("--no-sandbox")
