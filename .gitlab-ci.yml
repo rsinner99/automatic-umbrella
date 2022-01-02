@@ -43,7 +43,32 @@ e2e-tests:
   artifacts:
     when: always
     paths:
-    - ./*.html
     - reports/*.html
     - test_results.csv
+    expire_in: 1 week
+
+
+evaluation:
+  stage: e2e
+  variables:
+    RCA_DB_URL: "192.168.84.7"
+    RCA_CSV_PATH: "eval_results.csv"
+    RCA_REPORT_DIR: "eval_reports"
+  before_script:
+    - apt-get update
+    - apt-get install -y curl musl-dev gcc libffi-dev chromium-driver
+    - export PATH=/usr/bin/chromedriver:$PATH
+    - python -m pip install -U pip setuptools
+  script:
+    - python -m pip install -r ./e2e_tests/requirements.txt
+    - curl "http://192.168.84.7/" # verify app is running
+    - mkdir eval_reports
+    - python -m unittest discover e2e_tests.evaluation_tests
+  after_script:
+    - TracingRCA
+  artifacts:
+    when: always
+    paths:
+    - eval_reports/*.html
+    - eval_results.csv
     expire_in: 1 week
