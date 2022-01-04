@@ -11,19 +11,21 @@ class FileStorage(Storage):
 @trace_params(trace_all=True)
 def put_content(content: str, filename: str):
     if not isinstance(content, str):
-        raise TypeError('content is not of type "str"')
+        raise TypeError(f'content is of type {type(content)}, but expected "str"')
     if not isinstance(filename, str):
-        raise TypeError('filename is not of type "str"')
+        raise TypeError(f'filenameis of type {type(filename)}, but expected "str"')
     store = FileStorage()
     path = f'/tmp/{filename}'
     with open(path, 'w') as f:
         f.write(str(content))
-    object = store.fput(filename, path)
+    obj = store.fput(filename, path)
+    if not obj:
+        raise ConnectionError('Content could not be stored in MinIO')
     os.remove(path)
     result = {
-        'object_name': object.object_name,
-        'version_id': object.version_id,
-        'location': object.location
+        'object_name': obj.object_name,
+        'version_id': obj.version_id,
+        'location': obj.location
     }
     return result
 

@@ -25,12 +25,10 @@ def run_python(ssh, content):
     ssh.exec_command('rm ~/script.py')
 
     ssh.close()
-
-    result = {
-        'output': output,
-        'error': error
-    }
-    return result
+    if error:
+        raise OSError(error)
+    
+    return output
 
 
 def run_bash(ssh, content):
@@ -40,9 +38,8 @@ def run_bash(ssh, content):
     error = stderr.read().decode().strip()
 
     ssh.close()
+    if error:
+        raise OSError(error)
 
-    result = {
-        'output': output,
-        'error': error
-    }
-    return result
+    return output
+
