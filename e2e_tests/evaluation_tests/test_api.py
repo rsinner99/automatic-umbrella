@@ -1,6 +1,7 @@
 import logging
 import requests
 import time
+import json
 
 from selenium import webdriver
 from selenium.webdriver.support.ui import Select
@@ -135,19 +136,22 @@ class Test028(Runner):
 
     def test_task(self):
         data = {
-            "taskname":"task.invalid_name",
-            "name":"TestPostman"
+            "taskname": "task.invalid_name",
+            "name": "TestPostman"
         }
-        resp = requests.post(BASE_URL + "api/task/generic_run", data=data, headers=self.header)
-        assert resp.status_code == 201
+        resp = requests.post(BASE_URL + "api/task/generic_run", data=json.dumps(data), headers=self.header)
+        assert resp.status_code == 200
 
         task_id = resp.json()['task_id']
         params = {
             'task': task_id
         }
         resp = requests.get(BASE_URL + "api/task/result", params=params, headers=self.header)
-        while resp.json()['status'] == 'PENDING':
+        counter = 0
+        while resp.json()['status'] == 'PENDING' and counter < 10:
             time.sleep(1)
             resp = requests.get(BASE_URL + "api/task/result", params=params, headers=self.header)
-        
+            counter += 1
+
         assert resp.json()['status'] == 'SUCCESS'
+
