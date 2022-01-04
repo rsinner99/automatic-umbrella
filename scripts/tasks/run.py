@@ -2,7 +2,7 @@ import io
 
 def is_python_installed(ssh):
     script = 'python3 --version'
-    stdin, stdout, stderr = ssh.exec_command(script)
+    stdin, stdout, stderr = ssh.exec_command(script, timeout=5)
     error = stderr.read().decode().strip()
     if error:
         return False
@@ -18,7 +18,7 @@ def run_python(ssh, content):
     content = content.replace('"','\\"')
     ssh.exec_command(f'echo "{content}" > ~/script.py')
 
-    stdin, stdout, stderr = ssh.exec_command('python3 ~/script.py')
+    stdin, stdout, stderr = ssh.exec_command('python3 ~/script.py', timeout=5)
     output = stdout.read().decode().strip()
     error = stderr.read().decode().strip()
 
@@ -34,7 +34,7 @@ def run_python(ssh, content):
 
 
 def run_bash(ssh, content):
-    stdin, stdout, stderr = ssh.exec_command(content)
+    stdin, stdout, stderr = ssh.exec_command(content, timeout=5)
 
     output = stdout.read().decode().strip()
     error = stderr.read().decode().strip()
