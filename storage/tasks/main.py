@@ -10,6 +10,10 @@ class FileStorage(Storage):
 @app.task(name='storage.put_content')
 @trace_params(trace_all=True)
 def put_content(content: str, filename: str):
+    if not isinstance(content, str):
+        raise TypeError('content is not of type "str"')
+    if not isinstance(filename, str):
+        raise TypeError('filename is not of type "str"')
     store = FileStorage()
     path = f'/tmp/{filename}'
     with open(path, 'w') as f:
@@ -26,6 +30,8 @@ def put_content(content: str, filename: str):
 @app.task(name='storage.get_content')
 @trace_params(trace_all=True)
 def get_content(filename: str):
+    if not isinstance(filename, str):
+        raise TypeError('filename is not of type "str"')
     store = FileStorage()
     path = f'/tmp/{filename}'
     store.fget(filename, path)
