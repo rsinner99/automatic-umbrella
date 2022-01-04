@@ -38,14 +38,14 @@ def connect(peer: dict):
             mock_file = io.StringIO.StringIO(pkey)
             pkey = paramiko.RSAKey.from_private_key(mock_file)
             passphrase = peer.get('passphrase', '')
-            ssh.connect(host, port=port, username=username, password=passphrase, pkey=pkey)
+            ssh.connect(host, port=port, username=username, password=passphrase, pkey=pkey, auth_timeout=3, timeout=3)
         except Exception as e:
             errors.append(e)
     
     if errors or not pkey:
         try:
             password = peer.get('password')
-            ssh.connect(host, port=port, username=username, password=password)
+            ssh.connect(host, port=port, username=username, password=password, auth_timeout=3, timeout=3)
         except Exception as e:
             errors.append(e)
             return errors
