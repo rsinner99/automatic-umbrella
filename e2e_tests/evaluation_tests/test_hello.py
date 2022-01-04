@@ -64,7 +64,7 @@ class Test020(BaseTest):
         self.driver.find_element(By.LINK_TEXT, 'Tasks').click()
         dropdown = Select(self.driver.find_element_by_id('id_taskname'))
         dropdown.select_by_value('hello.run_script_output_to_storage')
-        self.driver.find_element_by_id('run_script_output_to_storage_id_doc').send_keys(23)
+        self.driver.find_element_by_id('run_script_output_to_storage_id_doc').send_keys(9)
         self.driver.find_element_by_id('run_script_output_to_storage_id_peers').send_keys(1)
         self.driver.find_element_by_id('run_script_output_to_storage_id_filename').send_keys('test.txt')
 
