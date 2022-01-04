@@ -126,7 +126,7 @@ def get_token(username, password):
         raise Exception('Token generation failed')
 
 
-class PingTaskApiTest(Runner):
+class Test028(Runner):
     def setUp(self):
         token = get_token('test', 'test1234test')
         self.header = {
@@ -139,7 +139,7 @@ class PingTaskApiTest(Runner):
             "name":"TestPostman"
         }
         resp = requests.post(BASE_URL + "api/task/generic_run", data=data, headers=self.header)
-        assert resp.status_code == 200
+        assert resp.status_code == 201
 
         task_id = resp.json()['task_id']
         params = {
