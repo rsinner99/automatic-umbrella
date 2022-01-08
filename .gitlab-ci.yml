@@ -39,7 +39,7 @@ e2e-tests:
     - mkdir reports
     - python -m unittest discover e2e_tests
   after_script:
-    - TracingRCA
+    - TraceExplorer
   artifacts:
     when: always
     paths:
@@ -65,7 +65,7 @@ evaluation:
     - mkdir eval_reports
     - python -m unittest discover e2e_tests.evaluation_tests
   after_script:
-    - TracingRCA
+    - TraceExplorer
   artifacts:
     when: always
     paths:
