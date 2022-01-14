@@ -14,7 +14,7 @@ ENV PYTHONUNBUFFERED 1
 
 # install dependencies
 RUN pip install --upgrade pip
-COPY ./web/requirements.txt ./requirements.txt
+COPY ./requirements.txt ./requirements.txt
 RUN pip install -r requirements.txt
 
-COPY ./web ./
+COPY ./ ./
