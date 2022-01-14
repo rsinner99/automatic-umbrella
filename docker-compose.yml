@@ -44,7 +44,7 @@ services:
     image: web
     hostname: api
     build: 
-        context: .
+        context: ./web
         dockerfile: ./web/Dockerfile
     volumes:
       - ./web/:/code/
@@ -64,7 +64,7 @@ services:
     image: web
     hostname: frontend
     build: 
-        context: .
+        context: ./web
         dockerfile: ./web/Dockerfile
     volumes:
       - ./web/:/code/
