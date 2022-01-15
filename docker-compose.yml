@@ -3,6 +3,7 @@ services:
   db:
     image: mariadb:10.6
     restart: always
+    container_name: umbrella_db
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: umbrella
