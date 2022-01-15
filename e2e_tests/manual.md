@@ -9,6 +9,12 @@ Datenbank dump importieren für Testdaten\
 
 **Container und deren Ports auf localhost:**
 
+Nginx &#8594; 80 (/frontend)\
+Flower &#8594; 80 (/flower)
+
+Elasticsearch &#8594; 9200\
+Kibana &#8594; 5601\
+Jaeger UI &#8594; 16686
 
 ------------------------------------------------------------------------------------------
 
