@@ -18,4 +18,5 @@ RUN python -m pip install -r ./requirements.txt
 
 COPY . .
 
-ENTRYPOINT python -m unittest discover && TraceExplorer
+ENTRYPOINT ["tail"]
+CMD ["-f","/dev/null"]
