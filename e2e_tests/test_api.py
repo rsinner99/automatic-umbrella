@@ -1,7 +1,7 @@
 import requests
 import time
 
-from tracing_rca.testsuite.base import Runner
+from trace_explorer.testsuite.base import Runner
 
 BASE_URL = "http://192.168.84.7/"
 

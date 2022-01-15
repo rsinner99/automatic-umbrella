@@ -9,7 +9,7 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 
 
-from tracing_rca.testsuite.base import Runner
+from trace_explorer.testsuite.base import Runner
 
 logger = logging.getLogger("testrunners.selenium")
 logger.setLevel(logging.DEBUG)

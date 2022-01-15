@@ -7,7 +7,7 @@ from selenium import webdriver
 from selenium.webdriver.support.ui import Select
 from selenium.webdriver.chrome.options import Options
 
-from tracing_rca.testsuite.base import Runner
+from trace_explorer.testsuite.base import Runner
 #from unittest import TestCase as Runner
 
 logger = logging.getLogger("testrunners.selenium")
