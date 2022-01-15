@@ -5,7 +5,7 @@ Start als Produktivsystem mit docker-compose\
 `docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build`
 
 Datenbank dump importieren für Testdaten\
-`docker exec -i <mariadb-container> sh -c 'exec mysql -uroot -proot' < /some/path/on/your/host/all-databases.sql`
+`docker exec -i <mariadb-container> sh -c 'exec mysql -uroot -proot' < ./e2e_tests/testdata.sql`
 
 **Container und deren Ports auf localhost:**
 
