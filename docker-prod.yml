@@ -1,0 +1,243 @@
+version: "2"
+services:
+  db:
+    image: mariadb:10.6
+    restart: always
+    container_name: umbrella_db
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: umbrella
+      MYSQL_USER: user
+      MYSQL_PASSWORD: user
+    volumes:
+      - ./volumes/db/dump.sql:/docker-entrypoint-initdb.d/dump.sql
+      - mysql-data:/var/lib/mysql
+    expose:
+      - 3306
+
+  rabbitmq:
+    image: rabbitmq
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
+    expose:
+      - 5672
+
+  redis:
+    image: redis:6.2.6
+    expose:
+      - 6379
+
+  flower:
+    image: mher/flower:0.9.7
+    environment: 
+      - CELERY_BROKER_URL=amqp://guest:guest@rabbitmq:5672//
+      - FLOWER_PORT=8888
+      - FLOWER_URL_PREFIX=flower
+    depends_on: 
+      - rabbitmq
+      - redis
+    expose:
+      - 8888
+
+  minio:
+    image: minio/minio
+    command: server /export --console-address ":9090"
+    volumes:
+      - ./volumes/minio:/export
+    environment:
+      - MINIO_ACCESS_KEY=access-key
+      - MINIO_SECRET_KEY=secret-key
+    expose:
+      - 9000
+      - 9090
+
+  api:
+    image: registry.gitlab.com/rsinner99/automatic-umbrella/web:latest
+    command: gunicorn web.wsgi:application --bind 0.0.0.0:8000
+    expose:
+      - 8000
+    env_file:
+      - ./.env.prod
+    environment:
+      - DJANGO_ALLOWED_HOSTS=api localhost 127.0.0.1
+      - BROKER_URL=amqp://guest:guest@rabbitmq//
+      - REDIS_URL=redis://redis
+      - SQL_HOST=db
+      - EXTERNAL_API_URL=http://127.0.0.1:8000
+      - SERVICE_NAME=api
+      - TRACING_REPORTING_HOST=jaeger-agent
+      - TRACING_REPORTING_PORT=5775
+
+  frontend:
+    image: registry.gitlab.com/rsinner99/automatic-umbrella/web:latest
+    command: gunicorn web.wsgi:application --bind 0.0.0.0:8050
+    expose:
+      - 8050
+    env_file:
+      - ./.env.prod
+    environment:
+      - DJANGO_ALLOWED_HOSTS=api localhost 127.0.0.1
+      - BROKER_URL=amqp://guest:guest@rabbitmq//
+      - REDIS_URL=redis://redis
+      - SQL_HOST=db
+      - EXTERNAL_API_URL=http://127.0.0.1:8000
+      - SERVICE_NAME=api
+      - TRACING_REPORTING_HOST=jaeger-agent
+      - TRACING_REPORTING_PORT=5775
+
+  nginx:
+    image: registry.gitlab.com/rsinner99/automatic-umbrella/nginx:latest
+    ports:
+      - 80:80
+    depends_on:
+      - api
+      - frontend
+
+  scripts:
+    image: registry.gitlab.com/rsinner99/automatic-umbrella/scripts:latest
+    environment:
+      - BROKER_URL=amqp://guest:guest@rabbitmq//
+      - REDIS_URL=redis://redis
+      - API_URL=http://api:8000/
+      - SERVICE_NAME=scripts
+      - TRACING_REPORTING_HOST=jaeger-agent
+      - TRACING_REPORTING_PORT=6831
+    extra_hosts:
+    - "host.docker.internal:host-gateway"
+
+  hello:
+    image: registry.gitlab.com/rsinner99/automatic-umbrella/hello:latest
+    environment:
+      - BROKER_URL=amqp://guest:guest@rabbitmq//
+      - REDIS_URL=redis://redis
+      - SERVICE_NAME=hello
+      - TRACING_REPORTING_HOST=jaeger-agent
+      - TRACING_REPORTING_PORT=6831
+
+  monitor:
+    image: registry.gitlab.com/rsinner99/automatic-umbrella/monitor:latest
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - BROKER_URL=amqp://guest:guest@rabbitmq//
+      - REDIS_URL=redis://redis
+      - SERVICE_NAME=monitor
+      - TRACING_REPORTING_HOST=jaeger-agent
+      - TRACING_REPORTING_PORT=6831
+
+  storage:
+    image: registry.gitlab.com/rsinner99/automatic-umbrella/storage:latest
+    environment:
+      - BROKER_URL=amqp://guest:guest@rabbitmq//
+      - REDIS_URL=redis://redis
+      - MINIO_ACCESS_KEY=access-key
+      - MINIO_SECRET_KEY=secret-key
+      - MINIO_ENDPOINT=minio:9000
+      - MINIO_SECURE=0
+      - SERVICE_NAME=storage
+      - TRACING_REPORTING_HOST=jaeger-agent
+      - TRACING_REPORTING_PORT=6831
+
+  pinger:
+    image: registry.gitlab.com/rsinner99/automatic-umbrella/pinger:latest
+    environment:
+      - BROKER_URL=amqp://guest:guest@rabbitmq//
+      - REDIS_URL=redis://redis  
+      - SERVICE_NAME=pinger
+      - TRACING_REPORTING_HOST=jaeger-agent
+      - TRACING_REPORTING_PORT=6831
+
+  calculator:
+    image: registry.gitlab.com/rsinner99/automatic-umbrella/calculator:latest
+    environment:
+      - BROKER_URL=amqp://guest:guest@rabbitmq//
+      - REDIS_URL=redis://redis
+      - SERVICE_NAME=calculator
+      - TRACING_REPORTING_HOST=jaeger-agent
+      - TRACING_REPORTING_PORT=6831
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:6.3.1
+    networks:
+      - elastic-jaeger
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    environment:
+      - cluster.name=jaeger-cluster
+      - discovery.type=single-node
+      - http.host=0.0.0.0
+      - transport.host=127.0.0.1
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+      - xpack.security.enabled=false
+    restart: on-failure
+    volumes:
+      - esdata:/usr/share/elasticsearch/data
+
+  jaeger-collector:
+    image: jaegertracing/jaeger-collector:1.7
+    ports:
+      - "14269:14269"
+      - "14268:14268"
+      - "14267:14267"
+      - "9411:9411"
+    networks:
+      - elastic-jaeger
+    restart: on-failure
+    environment:
+      - SPAN_STORAGE_TYPE=elasticsearch
+    command: [
+      "--es.server-urls=http://elasticsearch:9200",
+      "--es.num-shards=1",
+      "--es.num-replicas=0",
+      "--log-level=error"
+    ]
+    depends_on:
+      - elasticsearch
+
+  jaeger-agent:
+    image: jaegertracing/jaeger-agent:1.7
+    hostname: jaeger-agent
+    command: ["--collector.host-port=jaeger-collector:14267"]
+    ports:
+      - "5775:5775/udp"
+      - "6831:6831/udp"
+      - "6832:6832/udp"
+      - "5778:5778"
+    networks:
+      - default
+      - elastic-jaeger
+    restart: on-failure
+    environment:
+      - SPAN_STORAGE_TYPE=elasticsearch
+    depends_on:
+      - jaeger-collector
+
+  jaeger-query:
+    image: jaegertracing/jaeger-query:1.7
+    environment:
+      - SPAN_STORAGE_TYPE=elasticsearch
+      - no_proxy=localhost
+    ports:
+      - "16686:16686"
+      - "16687:16687"
+    networks:
+      - elastic-jaeger
+    restart: on-failure
+    command: [
+      "--es.server-urls=http://elasticsearch:9200",
+      "--span-storage.type=elasticsearch",
+      "--log-level=debug"
+    ]
+    depends_on:
+      - jaeger-agent
+
+volumes:
+  esdata:
+    driver: local
+  mysql-data:
+
+networks:
+  elastic-jaeger:
+    driver: bridge 
