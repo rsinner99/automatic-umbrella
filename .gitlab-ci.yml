@@ -40,6 +40,7 @@ e2e-tests:
     - python -m unittest discover e2e_tests
   after_script:
     - TraceExplorer
+  when: manual
   artifacts:
     when: always
     paths:
@@ -66,9 +67,30 @@ evaluation:
     - python -m unittest discover e2e_tests.evaluation_tests
   after_script:
     - TraceExplorer
+  when: manual
   artifacts:
     when: always
     paths:
     - eval_reports/*.html
     - eval_results.csv
+    expire_in: 1 week
+
+
+trace_analysis:
+  image: jonaskello/docker-and-compose:1.12.1-1.8.0
+  stage: e2e
+  before_script:
+    - docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build
+    - docker exec -i umbrella_db sh -c 'exec mysql -uroot -proot' < ./e2e_tests/testdata.sql
+    - docker build -f e2e_tests/Dockerfile -t umbrella_test_runner --build-arg docker_host=172.17.0.1 ./e2e_tests
+    - mkdir reports # Verzeichnis für die Auswertungsberichte in HTML: Auf dem Host verfuegbar
+    - docker run -d -v $(pwd)/reports:/code/eval_reports --add-host=host.docker:172.17.0.1 --name e2e_runner umbrella_test_runner
+  script:
+    - docker exec -it e2e_runner python -m unittest discover # Testausfuehrung
+    - docker exec -it e2e_runner TraceExplorer # Trace-Auswertung
+  when: manual
+  artifacts:
+    when: always
+    paths:
+    - reports/*.html
     expire_in: 1 week
