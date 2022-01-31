@@ -89,7 +89,7 @@ trace_analysis:
   variables:
     DOCKER_DRIVER: overlay2
   script:
-    - docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build
+    - docker-compose -f docker-prod.yml up -d
     - docker build -f e2e_tests/Dockerfile -t umbrella_test_runner --build-arg docker_host=172.17.0.1 ./e2e_tests
     - docker exec -i umbrella_db sh -c 'exec mysql -h 127.0.0.1 -P 3306 -uroot -proot' < ./e2e_tests/testdata.sql
     - mkdir reports # Verzeichnis für die Auswertungsberichte in HTML: Auf dem Host verfuegbar
