@@ -90,8 +90,8 @@ trace_analysis:
     DOCKER_DRIVER: overlay2
   script:
     - docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build
-    - docker exec -i umbrella_db sh -c 'exec mysql -uroot -proot' < ./e2e_tests/testdata.sql
     - docker build -f e2e_tests/Dockerfile -t umbrella_test_runner --build-arg docker_host=172.17.0.1 ./e2e_tests
+    - docker exec -i umbrella_db sh -c 'exec mysql -h 127.0.0.1 -P 3306 -uroot -proot' < ./e2e_tests/testdata.sql
     - mkdir reports # Verzeichnis für die Auswertungsberichte in HTML: Auf dem Host verfuegbar
     - docker run -d -v $(pwd)/reports:/code/eval_reports --add-host=host.docker:172.17.0.1 --name e2e_runner umbrella_test_runner
     - docker exec -it e2e_runner python -m unittest discover # Testausfuehrung
