@@ -80,7 +80,7 @@ trace_analysis:
   image: jonaskello/docker-and-compose:1.12.1-1.8.0
   stage: e2e
   variables:
-    DOCKER_HOST: "unix:///var/run/docker.sock"
+    DOCKER_HOST: "tcp://docker:2375"
   before_script:
     - docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build
     - docker exec -i umbrella_db sh -c 'exec mysql -uroot -proot' < ./e2e_tests/testdata.sql
