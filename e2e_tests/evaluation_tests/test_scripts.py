@@ -1,6 +1,5 @@
 import logging
-import sys
-import unittest
+import os
 import time
 
 from selenium import webdriver
@@ -14,6 +13,8 @@ from trace_explorer.testsuite.base import Runner
 logger = logging.getLogger("testrunners.selenium")
 logger.setLevel(logging.DEBUG)
 
+BASE_URL = os.environ.get("BASE_URL", "localhost")
+
 class BaseTest(Runner):
     def setUp(self) -> None:
         chrome_options = Options()
@@ -23,7 +24,7 @@ class BaseTest(Runner):
         chrome_options.add_argument("--disable-gpu")
         self.driver = webdriver.Chrome(options=chrome_options)
 
-        self.driver.get("http://192.168.84.7/frontend/login")
+        self.driver.get(f"http://{BASE_URL}/frontend/login")
         self.driver.find_element(By.NAME, 'username').send_keys('test')
         self.driver.find_element(By.NAME, 'password').send_keys('test1234test')
         time.sleep(1)
@@ -31,7 +32,7 @@ class BaseTest(Runner):
         return super().setUp()
 
     def tearDown(self) -> None:
-        self.driver.get("http://192.168.84.7/frontend/")
+        self.driver.get(f"http://{BASE_URL}/frontend/")
         self.driver.find_element(By.LINK_TEXT, 'Logout')
         self.driver.close()
         return super().tearDown()
@@ -40,7 +41,7 @@ class Test001(BaseTest):
     def test(self):
         logger.debug('Evaluation Test 001...')
 
-        self.driver.get("http://192.168.84.7/frontend/")
+        self.driver.get(f"http://{BASE_URL}/frontend/")
         
         self.driver.find_element(By.LINK_TEXT, 'Tasks').click()
         dropdown = Select(self.driver.find_element_by_id('id_taskname'))
@@ -58,7 +59,7 @@ class Test002(BaseTest):
     def test(self):
         logger.debug('Evaluation Test 002...')
 
-        self.driver.get("http://192.168.84.7/frontend/")
+        self.driver.get(f"http://{BASE_URL}/frontend/")
         
         self.driver.find_element(By.LINK_TEXT, 'Tasks').click()
         dropdown = Select(self.driver.find_element_by_id('id_taskname'))
@@ -76,7 +77,7 @@ class Test003(BaseTest):
     def test(self):
         logger.debug('Evaluation Test 003...')
 
-        self.driver.get("http://192.168.84.7/frontend/")
+        self.driver.get(f"http://{BASE_URL}/frontend/")
         
         self.driver.find_element(By.LINK_TEXT, 'Tasks').click()
         dropdown = Select(self.driver.find_element_by_id('id_taskname'))
@@ -94,7 +95,7 @@ class Test004(BaseTest):
     def test(self):
         logger.debug('Evaluation Test 004...')
 
-        self.driver.get("http://192.168.84.7/frontend/")
+        self.driver.get(f"http://{BASE_URL}/frontend/")
         
         self.driver.find_element(By.LINK_TEXT, 'Tasks').click()
         dropdown = Select(self.driver.find_element_by_id('id_taskname'))
@@ -112,7 +113,7 @@ class Test005(BaseTest):
     def test(self):
         logger.debug('Evaluation Test 005...')
 
-        self.driver.get("http://192.168.84.7/frontend/")
+        self.driver.get(f"http://{BASE_URL}/frontend/")
         
         self.driver.find_element(By.LINK_TEXT, 'Tasks').click()
         dropdown = Select(self.driver.find_element_by_id('id_taskname'))
@@ -130,7 +131,7 @@ class Test006(BaseTest):
     def test(self):
         logger.debug('Evaluation Test 006...')
 
-        self.driver.get("http://192.168.84.7/frontend/")
+        self.driver.get(f"http://{BASE_URL}/frontend/")
         
         self.driver.find_element(By.LINK_TEXT, 'Tasks').click()
         dropdown = Select(self.driver.find_element_by_id('id_taskname'))
@@ -148,7 +149,7 @@ class Test007(BaseTest):
     def test(self):
         logger.debug('Evaluation Test 007...')
 
-        self.driver.get("http://192.168.84.7/frontend/")
+        self.driver.get(f"http://{BASE_URL}/frontend/")
         
         self.driver.find_element(By.LINK_TEXT, 'Tasks').click()
         dropdown = Select(self.driver.find_element_by_id('id_taskname'))

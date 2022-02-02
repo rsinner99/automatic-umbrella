@@ -1,3 +1,4 @@
+import os
 import logging
 import sys
 import unittest
@@ -13,6 +14,8 @@ from trace_explorer.testsuite.base import Runner
 logger = logging.getLogger("testrunners.selenium")
 logger.setLevel(logging.DEBUG)
 
+BASE_URL = os.environ.get("BASE_URL", "localhost")
+
 class TestSelenium1(Runner):
     
     def test_neu(self):
@@ -21,7 +24,7 @@ class TestSelenium1(Runner):
         chrome_options.add_argument("--no-sandbox")
         chrome_options.add_argument("--headless")
         driver = webdriver.Chrome(options=chrome_options)
-        driver.get("http://192.168.84.7/frontend/")
+        driver.get(f"http://{BASE_URL}/frontend/")
         assert "Umbrella" in driver.title
         driver.close()
 
@@ -33,7 +36,7 @@ class TestSeleniumTest2(Runner):
         chrome_options.add_argument("--no-sandbox")
         chrome_options.add_argument("--headless")
         driver = webdriver.Chrome(options=chrome_options)
-        driver.get("http://192.168.84.7/frontend/")
+        driver.get(f"http://{BASE_URL}/frontend/")
         assert "Umbrella" not in driver.title
         driver.close()
 
@@ -45,15 +48,15 @@ class TestSeleniumTest3(Runner):
         chrome_options.add_argument("--no-sandbox")
         chrome_options.add_argument("--headless")
         driver = webdriver.Chrome(options=chrome_options)
-        driver.get("http://192.168.84.7/frontend/login")
+        driver.get(f"http://{BASE_URL}/frontend/login")
         assert "Umbrella" in driver.title
         driver.find_element_by_name('username').send_keys('test')
         driver.find_element_by_name('password').send_keys('test1234test')
         time.sleep(1)
         driver.find_element_by_tag_name("button").click()
-        driver.get("http://192.168.84.7/frontend")
+        driver.get(f"http://{BASE_URL}/frontend")
         driver.find_element_by_tag_name("button").click()
-        driver.get("http://192.168.84.7/frontend/logfqwf")
+        driver.get(f"http://{BASE_URL}/frontend/logfqwf")
         assert "Umbrella" in driver.title
         driver.close()
         
@@ -66,13 +69,13 @@ class ScriptNotFoundTest(Runner):
         chrome_options.add_argument("--no-sandbox")
         chrome_options.add_argument("--headless")
         driver = webdriver.Chrome(options=chrome_options)
-        driver.get("http://192.168.84.7/frontend/login")
+        driver.get(f"http://{BASE_URL}/frontend/login")
         assert "Umbrella" in driver.title
         driver.find_element_by_name('username').send_keys('test')
         driver.find_element_by_name('password').send_keys('test1234test')
         time.sleep(1)
         driver.find_element_by_tag_name("button").click()
-        driver.get("http://192.168.84.7/frontend/tasks/")
+        driver.get(f"http://{BASE_URL}/frontend/tasks/")
 
         dropdown = Select(driver.find_element_by_id('id_taskname'))
         dropdown.select_by_value('hello.run_script_output_to_storage')
@@ -92,7 +95,7 @@ class NewScriptNotFoundTest(Runner):
         chrome_options.add_argument("--headless")
         self.driver = webdriver.Chrome(options=chrome_options)
 
-        self.driver.get("http://192.168.84.7/frontend/login")
+        self.driver.get(f"http://{BASE_URL}/frontend/login")
         self.driver.find_element_by_name('username').send_keys('test')
         self.driver.find_element_by_name('password').send_keys('test1234test')
         time.sleep(1)
@@ -106,7 +109,7 @@ class NewScriptNotFoundTest(Runner):
     def test_4(self):
         logger.debug('NewScriptNotFoundTest...')
         
-        self.driver.get("http://192.168.84.7/frontend/tasks/")
+        self.driver.get(f"http://{BASE_URL}/frontend/tasks/")
 
         dropdown = Select(self.driver.find_element_by_id('id_taskname'))
         dropdown.select_by_value('hello.run_script_output_to_storage')
@@ -121,7 +124,7 @@ class NewScriptNotFoundTest(Runner):
     def test_5(self):
         logger.debug('NewScriptNotFoundTest...')
         
-        self.driver.get("http://192.168.84.7/frontend/tasks/")
+        self.driver.get(f"http://{BASE_URL}/frontend/tasks/")
 
         dropdown = Select(self.driver.find_element_by_id('id_taskname'))
         dropdown.select_by_value('hello.run_script_output_to_storage')

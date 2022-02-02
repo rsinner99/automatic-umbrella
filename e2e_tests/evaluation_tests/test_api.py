@@ -1,3 +1,4 @@
+import os
 import logging
 import requests
 import time
@@ -14,7 +15,7 @@ from trace_explorer.testsuite.base import Runner
 logger = logging.getLogger("testrunners.selenium")
 logger.setLevel(logging.DEBUG)
 
-BASE_URL = "http://192.168.84.7/"
+BASE_URL = os.environ.get("BASE_URL", "localhost")
 
 class BaseTest(Runner):
     def setUp(self) -> None:
@@ -25,7 +26,7 @@ class BaseTest(Runner):
         chrome_options.add_argument("--disable-gpu")
         self.driver = webdriver.Chrome(options=chrome_options)
 
-        self.driver.get("http://192.168.84.7/frontend/login")
+        self.driver.get(f"http://{BASE_URL}/frontend/login")
         self.driver.find_element(By.NAME, 'username').send_keys('test')
         self.driver.find_element(By.NAME, 'password').send_keys('test1234test')
         time.sleep(1)
@@ -33,7 +34,7 @@ class BaseTest(Runner):
         return super().setUp()
 
     def tearDown(self) -> None:
-        self.driver.get("http://192.168.84.7/frontend/")
+        self.driver.get(f"http://{BASE_URL}/frontend/")
         self.driver.find_element(By.LINK_TEXT, 'Logout')
         self.driver.close()
         return super().tearDown()
@@ -43,7 +44,7 @@ class Test024(BaseTest):
     def test(self):
         logger.debug('Evaluation Test 024...')
 
-        self.driver.get("http://192.168.84.7/frontend/")
+        self.driver.get(f"http://{BASE_URL}/frontend/")
         
         self.driver.find_element(By.LINK_TEXT, 'Tasks').click()
         dropdown = Select(self.driver.find_element_by_id('id_taskname'))
@@ -62,7 +63,7 @@ class Test025(BaseTest):
     def test(self):
         logger.debug('Evaluation Test 025...')
 
-        self.driver.get("http://192.168.84.7/frontend/")
+        self.driver.get(f"http://{BASE_URL}/frontend/")
         
         self.driver.find_element(By.LINK_TEXT, 'Tasks').click()
         dropdown = Select(self.driver.find_element_by_id('id_taskname'))
@@ -81,7 +82,7 @@ class Test026(BaseTest):
     def test(self):
         logger.debug('Evaluation Test 026...')
 
-        self.driver.get("http://192.168.84.7/frontend/")
+        self.driver.get(f"http://{BASE_URL}/frontend/")
         
         self.driver.find_element(By.LINK_TEXT, 'Tasks').click()
         dropdown = Select(self.driver.find_element_by_id('id_taskname'))
@@ -100,7 +101,7 @@ class Test027(BaseTest):
     def test(self):
         logger.debug('Evaluation Test 027...')
 
-        self.driver.get("http://192.168.84.7/frontend/")
+        self.driver.get(f"http://{BASE_URL}/frontend/")
         
         self.driver.find_element(By.LINK_TEXT, 'Tasks').click()
         dropdown = Select(self.driver.find_element_by_id('id_taskname'))
@@ -120,7 +121,7 @@ def get_token(username, password):
         'username': username,
         'password': password
     }
-    resp = requests.post(BASE_URL + "api/token/", data=data)
+    resp = requests.post(f"http://{BASE_URL}/api/token/", data=data)
     if resp.status_code == 200:
         return resp.json()['access']
     else:
@@ -139,18 +140,18 @@ class Test028(Runner):
             "taskname": "task.invalid_name",
             "name": "TestPostman"
         }
-        resp = requests.post(BASE_URL + "api/task/generic_run", data=json.dumps(data), headers=self.header)
+        resp = requests.post(f"http://{BASE_URL}/api/task/generic_run", data=json.dumps(data), headers=self.header)
         assert resp.status_code == 200
 
         task_id = resp.json()['task_id']
         params = {
             'task': task_id
         }
-        resp = requests.get(BASE_URL + "api/task/result", params=params, headers=self.header)
+        resp = requests.get(f"http://{BASE_URL}/api/task/result", params=params, headers=self.header)
         counter = 0
         while resp.json()['status'] == 'PENDING' and counter < 10:
             time.sleep(1)
-            resp = requests.get(BASE_URL + "api/task/result", params=params, headers=self.header)
+            resp = requests.get(f"http://{BASE_URL}/api/task/result", params=params, headers=self.header)
             counter += 1
 
         assert resp.json()['status'] == 'SUCCESS'

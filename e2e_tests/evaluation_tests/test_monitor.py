@@ -1,6 +1,5 @@
 import logging
-import sys
-import unittest
+import os
 import time
 
 from selenium import webdriver
@@ -14,6 +13,8 @@ from trace_explorer.testsuite.base import Runner
 logger = logging.getLogger("testrunners.selenium")
 logger.setLevel(logging.DEBUG)
 
+BASE_URL = os.environ.get("BASE_URL", "localhost")
+
 class BaseTest(Runner):
     def setUp(self) -> None:
         chrome_options = Options()
@@ -23,7 +24,7 @@ class BaseTest(Runner):
         chrome_options.add_argument("--disable-gpu")
         self.driver = webdriver.Chrome(options=chrome_options)
 
-        self.driver.get("http://192.168.84.7/frontend/login")
+        self.driver.get(f"http://{BASE_URL}/frontend/login")
         self.driver.find_element(By.NAME, 'username').send_keys('test')
         self.driver.find_element(By.NAME, 'password').send_keys('test1234test')
         time.sleep(1)
@@ -31,7 +32,7 @@ class BaseTest(Runner):
         return super().setUp()
 
     def tearDown(self) -> None:
-        self.driver.get("http://192.168.84.7/frontend/")
+        self.driver.get(f"http://{BASE_URL}/frontend/")
         self.driver.find_element(By.LINK_TEXT, 'Logout')
         self.driver.close()
         return super().tearDown()
@@ -41,7 +42,7 @@ class Test008(BaseTest):
     def test(self):
         logger.debug('Evaluation Test 008...')
 
-        self.driver.get("http://192.168.84.7/frontend/")
+        self.driver.get(f"http://{BASE_URL}/frontend/")
         
         self.driver.find_element(By.LINK_TEXT, 'Home').click()
         self.driver.find_element(By.XPATH, "/html/body/div[2]/button").click()
@@ -54,7 +55,7 @@ class Test009(BaseTest):
     def test(self):
         logger.debug('Evaluation Test 009...')
 
-        self.driver.get("http://192.168.84.7/frontend/")
+        self.driver.get(f"http://{BASE_URL}/frontend/")
         
         self.driver.find_element(By.LINK_TEXT, 'Home').click()
         self.driver.find_element(By.XPATH, "/html/body/div[2]/button").click()

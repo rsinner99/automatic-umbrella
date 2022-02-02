@@ -1,3 +1,4 @@
+import os
 import logging
 import sys
 import unittest
@@ -14,6 +15,7 @@ from trace_explorer.testsuite.base import Runner
 logger = logging.getLogger("testrunners.selenium")
 logger.setLevel(logging.DEBUG)
 
+BASE_URL = os.environ.get("BASE_URL", "localhost")
 
 class DiscoverTestValid(Runner):
     def setUp(self) -> None:
@@ -24,7 +26,7 @@ class DiscoverTestValid(Runner):
         chrome_options.add_argument("--disable-gpu")
         self.driver = webdriver.Chrome(options=chrome_options)
 
-        self.driver.get("http://192.168.84.7/frontend/login")
+        self.driver.get(f"http://{BASE_URL}/frontend/login")
         self.driver.find_element(By.NAME, 'username').send_keys('test')
         self.driver.find_element(By.NAME, 'password').send_keys('test1234test')
         time.sleep(1)
@@ -32,7 +34,7 @@ class DiscoverTestValid(Runner):
         return super().setUp()
 
     def tearDown(self) -> None:
-        self.driver.get("http://192.168.84.7/frontend/")
+        self.driver.get(f"http://{BASE_URL}/frontend/")
         self.driver.find_element(By.LINK_TEXT, 'Logout')
         self.driver.close()
         return super().tearDown()
@@ -40,7 +42,7 @@ class DiscoverTestValid(Runner):
     def test(self):
         logger.debug('Run_script test 1...')
 
-        self.driver.get("http://192.168.84.7/frontend/")
+        self.driver.get(f"http://{BASE_URL}/frontend/")
         self.driver.find_element(By.LINK_TEXT, 'Tasks').click()
         task_choice = Select(self.driver.find_element(By.ID, "id_taskname"))
         task_choice.select_by_value("pinger.discover")
@@ -63,7 +65,7 @@ class DiscoverTestInvalid(Runner):
         chrome_options.add_argument("--disable-gpu")
         self.driver = webdriver.Chrome(options=chrome_options)
 
-        self.driver.get("http://192.168.84.7/frontend/login")
+        self.driver.get(f"http://{BASE_URL}/frontend/login")
         self.driver.find_element(By.NAME, 'username').send_keys('test')
         self.driver.find_element(By.NAME, 'password').send_keys('test1234test')
         time.sleep(1)
@@ -71,7 +73,7 @@ class DiscoverTestInvalid(Runner):
         return super().setUp()
 
     def tearDown(self) -> None:
-        self.driver.get("http://192.168.84.7/frontend/")
+        self.driver.get(f"http://{BASE_URL}/frontend/")
         self.driver.find_element(By.LINK_TEXT, 'Logout')
         self.driver.close()
         return super().tearDown()
@@ -79,7 +81,7 @@ class DiscoverTestInvalid(Runner):
     def test(self):
         logger.debug('Run_script test 1...')
 
-        self.driver.get("http://192.168.84.7/frontend/")
+        self.driver.get(f"http://{BASE_URL}/frontend/")
         self.driver.find_element(By.LINK_TEXT, 'Tasks').click()
         task_choice = Select(self.driver.find_element(By.ID, "id_taskname"))
         task_choice.select_by_value("pinger.discover")
@@ -102,7 +104,7 @@ class DiscoverTestInvalid2(Runner):
         chrome_options.add_argument("--disable-gpu")
         self.driver = webdriver.Chrome(options=chrome_options)
 
-        self.driver.get("http://192.168.84.7/frontend/login")
+        self.driver.get(f"http://{BASE_URL}/frontend/login")
         self.driver.find_element(By.NAME, 'username').send_keys('test')
         self.driver.find_element(By.NAME, 'password').send_keys('test1234test')
         time.sleep(1)
@@ -110,7 +112,7 @@ class DiscoverTestInvalid2(Runner):
         return super().setUp()
 
     def tearDown(self) -> None:
-        self.driver.get("http://192.168.84.7/frontend/")
+        self.driver.get(f"http://{BASE_URL}/frontend/")
         self.driver.find_element(By.LINK_TEXT, 'Logout')
         self.driver.close()
         return super().tearDown()
@@ -118,7 +120,7 @@ class DiscoverTestInvalid2(Runner):
     def test(self):
         logger.debug('Run_script test 1...')
 
-        self.driver.get("http://192.168.84.7/frontend/")
+        self.driver.get(f"http://{BASE_URL}/frontend/")
         self.driver.find_element(By.LINK_TEXT, 'Tasks').click()
         task_choice = Select(self.driver.find_element(By.ID, "id_taskname"))
         task_choice.select_by_value("pinger.discover")
