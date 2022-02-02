@@ -52,7 +52,7 @@ services:
     depends_on:
       - db
     environment:
-      - DJANGO_ALLOWED_HOSTS=api localhost 192.168.84.7
+      - DJANGO_ALLOWED_HOSTS=api localhost 192.168.84.7 172.17.0.1
       - BROKER_URL=amqp://guest:guest@rabbitmq//
       - REDIS_URL=redis://redis
       - SQL_HOST=db
@@ -74,7 +74,7 @@ services:
     depends_on:
       - db
     environment:
-      - DJANGO_ALLOWED_HOSTS=api localhost 192.168.84.7
+      - DJANGO_ALLOWED_HOSTS=api localhost 192.168.84.7 172.17.0.1
       - BROKER_URL=amqp://guest:guest@rabbitmq//
       - REDIS_URL=redis://redis
       - SQL_HOST=db
