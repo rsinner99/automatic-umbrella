@@ -6,3 +6,4 @@ git+https://github.com/rsinner99/opentracing-python-instrumentation.git
 jaeger_client==4.8.0
 celery-opentracing==0.0.1
 graphviz==0.17
+docker==5.0.3
