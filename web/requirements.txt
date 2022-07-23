@@ -12,5 +12,6 @@ opentelemetry-sdk
 opentelemetry-instrumentation-celery
 opentelemetry-instrumentation-django
 opentelemetry-instrumentation-requests
+opentelemetry-instrumentation-dbapi
 requests
 gunicorn==20.1.0
