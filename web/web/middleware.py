@@ -36,3 +36,4 @@ class JWTAuthenticationMiddleware(object):
             pass
         request.user = request.user or AnonymousUser()
         return self.get_response(request)
+

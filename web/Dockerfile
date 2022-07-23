@@ -1,5 +1,5 @@
 # pull official base image
-FROM python:3.9.6-buster
+FROM python:3.8-buster
 
 RUN apt-get update
 RUN apt-get install -y musl-dev libmariadb-dev gcc
