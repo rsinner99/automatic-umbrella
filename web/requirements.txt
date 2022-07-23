@@ -6,9 +6,11 @@ celery==5.2.3
 redis==4.1.2
 amqp==5.0.9
 mysql==0.0.3
-opentracing==2.4.0
-django-opentracing==1.1.0
-git+https://github.com/rsinner99/opentracing-python-instrumentation.git
-jaeger_client==4.8.0
-celery-opentracing==0.0.1
+opentelemetry-instrumentation
+opentelemetry-exporter-jaeger
+opentelemetry-sdk
+opentelemetry-instrumentation-celery
+opentelemetry-instrumentation-django
+opentelemetry-instrumentation-requests
+requests
 gunicorn==20.1.0
