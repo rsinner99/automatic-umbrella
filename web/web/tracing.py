@@ -1,4 +1,5 @@
 import os
+import MySQLdb
 
 from django.conf import settings
 
@@ -9,6 +10,8 @@ from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import BatchSpanProcessor
 from opentelemetry.instrumentation.django import DjangoInstrumentor
 from opentelemetry.instrumentation.requests import RequestsInstrumentor
+from opentelemetry.instrumentation.logging import LoggingInstrumentor
+from opentelemetry.instrumentation.dbapi import trace_integration
 
 REPORTING_HOST = os.environ.get('TRACING_REPORTING_HOST')
 REPORTING_PORT = os.environ.get('TRACING_REPORTING_PORT')
@@ -24,7 +27,10 @@ class TracingHeaderMiddleware(object):
         if settings.DEBUG:
             span = trace.propagation.get_current_span()
             for k, v in request.META.items():
-                span.set_attribute(f"headers.{k}", v)
+                try:
+                    span.set_attribute(f"headers.{k}", str(v))
+                except:
+                    pass
 
         response = self.get_response(request)
 
@@ -37,6 +43,8 @@ def setup_tracing(service="umbrella"):
     # This call is what makes the Django application be instrumented
     DjangoInstrumentor().instrument()
     RequestsInstrumentor().instrument()
+    LoggingInstrumentor().instrument(set_logging_format=True)
+    trace_integration(MySQLdb, "connect", "mysql")
 
     trace.set_tracer_provider(
     TracerProvider(

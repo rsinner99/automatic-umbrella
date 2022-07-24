@@ -13,7 +13,7 @@ def trace_params(trace_all=False, new_span=False, **additional_params):
                 span = get_current_span()
                 if new_span:
                     tracer = trace.get_tracer_provider().get_tracer(__name__)
-                    span = tracer.start_span(func.__name__, child_of=span)
+                    span = tracer.start_span(func.__name__)
                 with span:
                     if len(args) > 0:
                         span.set_attribute('input.args', args)
@@ -27,6 +27,7 @@ def trace_params(trace_all=False, new_span=False, **additional_params):
                     span.set_attribute('output', str(result))
                 return result
             except Exception as e:
+                span.set_attribute('error', True)
                 span.add_event({
                     "event": 'error',
                     "kind": type(e),
@@ -34,6 +35,7 @@ def trace_params(trace_all=False, new_span=False, **additional_params):
                     "message": str(e),
                     "stack": traceback.format_exc()
                 })
+                raise e
         return wrapper
     return decorator
 
