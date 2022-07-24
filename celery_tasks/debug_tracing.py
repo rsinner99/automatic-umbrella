@@ -14,29 +14,21 @@ def trace_params(trace_all=False, new_span=False, **additional_params):
                 if new_span:
                     tracer = trace.get_tracer_provider().get_tracer(__name__)
                     span = tracer.start_span(func.__name__)
+
                 with span:
                     if len(args) > 0:
                         span.set_attribute('input.args', args)
                     for k, v in kwargs.items():
-                        span.set_attribute('input.{}'.format(k), v)
+                        span.set_attribute('input.{}'.format(k), str(v))
                     for k, v in additional_params.items():
-                        span.set_attribute(k, v)
-            try:
-                result = func(*args, **kwargs)
-                if trace_all:
+                        span.set_attribute(k, str(v))
+
+                    result = func(*args, **kwargs)
                     span.set_attribute('output', str(result))
-                return result
-            except Exception as e:
-                span.set_attribute('error', True)
-                span.add_event({
-                    "event": 'error',
-                    "kind": type(e),
-                    "object": e,
-                    "message": str(e),
-                    "stack": traceback.format_exc()
-                })
-                raise e
+
+            else:
+                result = func(*args, **kwargs)
+            
+            return result
         return wrapper
     return decorator
-
-
