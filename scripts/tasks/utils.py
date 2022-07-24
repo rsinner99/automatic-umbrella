@@ -34,7 +34,7 @@ def connect(peer: dict):
     pkey = peer.get('private_key', None)
     conn = None
     if pkey:
-        mock_file = io.StringIO.StringIO(pkey)
+        mock_file = io.StringIO(pkey)
         pkey = paramiko.RSAKey.from_private_key(mock_file)
         passphrase = peer.get('passphrase', '')
         ssh.connect(host, port=port, username=username, password=passphrase, pkey=pkey, auth_timeout=3, timeout=3)
