@@ -17,7 +17,7 @@ def trace_params(trace_all=False, new_span=False, **additional_params):
 
                 with span:
                     if len(args) > 0:
-                        span.set_attribute('input.args', args)
+                        span.set_attribute('input.args', str(args))
                     for k, v in kwargs.items():
                         span.set_attribute('input.{}'.format(k), str(v))
                     for k, v in additional_params.items():

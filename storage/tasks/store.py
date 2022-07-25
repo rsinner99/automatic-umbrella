@@ -1,5 +1,6 @@
 import io
 from minio import Minio
+from debug_tracing import trace_params
 from serializers import serialize_minio_list, serialize_minio_object
 import settings
 
@@ -17,10 +18,12 @@ class Storage():
         if not found:
             self.client.make_bucket(self.name)
 
+    @trace_params(trace_all=True, new_span=True)
     def list(self, prefix=None, include_version=False):
         objects = self.client.list_objects(self.name, prefix=prefix, include_version=include_version)
         return serialize_minio_list(objects)
 
+    @trace_params(trace_all=True, new_span=True)
     def get(self, object_name: str, version_id=None):
         try:
             response = self.client.get_object(self.name, object_name, version_id=version_id)
@@ -33,9 +36,11 @@ class Storage():
             return response
         return data
 
+    @trace_params(trace_all=True, new_span=True)
     def fget(self, object_name: str, file_path: str, version_id=None):
         return self.client.fget_object(self.name, object_name, file_path, version_id=version_id)
 
+    @trace_params(trace_all=True, new_span=True)
     def put(self, object_name:str, content: str, length: int):
         data = io.BytesIO(bytes(content, 'UTF-8'))
         result = self.client.put_object(
@@ -43,8 +48,10 @@ class Storage():
         )
         return result
 
+    @trace_params(trace_all=True, new_span=True)
     def fput(self, object_name: str, file_path: str):
         return self.client.fput_object(self.name, object_name, file_path)
 
+    @trace_params(trace_all=True, new_span=True)
     def remove(self, object_name, version_id=None):
         return self.client.remove_object(self.name, object_name, version_id=version_id)
