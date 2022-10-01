@@ -52,7 +52,7 @@ services:
     depends_on:
       - db
     environment:
-      - DJANGO_ALLOWED_HOSTS=api localhost 192.168.84.7 172.17.0.1
+      - DJANGO_ALLOWED_HOSTS=*
       - BROKER_URL=amqp://guest:guest@rabbitmq//
       - REDIS_URL=redis://redis
       - SQL_HOST=db
@@ -74,7 +74,7 @@ services:
     depends_on:
       - db
     environment:
-      - DJANGO_ALLOWED_HOSTS=frontend localhost 192.168.84.7 172.17.0.1
+      - DJANGO_ALLOWED_HOSTS=*
       - BROKER_URL=amqp://guest:guest@rabbitmq//
       - REDIS_URL=redis://redis
       - SQL_HOST=db
@@ -109,6 +109,7 @@ services:
       - SERVICE_NAME=hello
       - TRACING_REPORTING_HOST=jaeger-agent
       - TRACING_REPORTING_PORT=6831
+      - API_URL=http://api:8000/
 
   monitor:
     image: monitor_worker
@@ -123,6 +124,7 @@ services:
       - SERVICE_NAME=monitor
       - TRACING_REPORTING_HOST=jaeger-agent
       - TRACING_REPORTING_PORT=6831
+      - API_URL=http://api:8000/
 
   storage:
     image: storage_worker
@@ -139,6 +141,7 @@ services:
       - SERVICE_NAME=storage
       - TRACING_REPORTING_HOST=jaeger-agent
       - TRACING_REPORTING_PORT=6831
+      - API_URL=http://api:8000/
 
   pinger:
     image: pinger_worker
@@ -151,6 +154,7 @@ services:
       - SERVICE_NAME=pinger
       - TRACING_REPORTING_HOST=jaeger-agent
       - TRACING_REPORTING_PORT=6831
+      - API_URL=http://api:8000/
 
   calculator:
     image: calculator_worker
@@ -163,6 +167,7 @@ services:
       - SERVICE_NAME=calculator
       - TRACING_REPORTING_HOST=jaeger-agent
       - TRACING_REPORTING_PORT=6831
+      - API_URL=http://api:8000/
 
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:6.3.1

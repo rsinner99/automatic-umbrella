@@ -5,7 +5,7 @@ django-cors-headers==3.11.0
 celery==5.2.3
 redis==4.1.2
 amqp==5.0.9
-mysql==0.0.3
+pymysql
 opentelemetry-instrumentation
 opentelemetry-exporter-jaeger
 opentelemetry-sdk

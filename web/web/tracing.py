@@ -1,5 +1,5 @@
 import os
-import MySQLdb
+#import MySQLdb
 
 from django.conf import settings
 
@@ -44,7 +44,7 @@ def setup_tracing(service="umbrella"):
     DjangoInstrumentor().instrument()
     RequestsInstrumentor().instrument()
     LoggingInstrumentor().instrument(set_logging_format=True)
-    trace_integration(MySQLdb, "connect", "mysql")
+    #trace_integration(MySQLdb, "connect", "mysql")
 
     trace.set_tracer_provider(
     TracerProvider(

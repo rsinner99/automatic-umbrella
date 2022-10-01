@@ -25,8 +25,8 @@ def post_task(task_id, name, state):
         "name": name,
         "state": state
     }
-    resp = requests.post(API_URL + f'task/update', params=params)
-    if resp.status_code == 201:
+    resp = requests.get(API_URL + f'api/task/update', params=params)
+    if resp.status_code == 200:
         return True
     else:
         raise Exception(resp.content)

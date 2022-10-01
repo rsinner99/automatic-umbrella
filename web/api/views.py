@@ -38,29 +38,25 @@ class ApiTaskView(GenericAPIView):
 
 class ApiTaskUpdateView(GenericAPIView):
     serializer_class = TaskSerializer
-    permission_classes = (IsAuthenticated,)
+    #permission_classes = (IsAuthenticated,)
 
-    def post(self, request):
+    def get(self, request):
         task_id = request.query_params.get('task', None)
         state = request.query_params.get('state', None)
         name = request.query_params.get('name', None)
-        user = request.user
 
         try:
             task = Task.objects.get(task_id=task_id)
-            task.update(
-                user=user,
-                task_name=name,
-                state=state
-            )
+            task.task_name=name
+            task.state=state
+            task.save()
         except Task.DoesNotExist:
             task = Task.objects.create(
                 task_id=task_id,
-                user=user,
                 task_name=name,
                 state=state
             )
-        return HttpResponse("Created/ Updated", status=status.HTTP_201_CREATED)
+        return HttpResponse("Created/ Updated", status=status.HTTP_200_OK)
 
 
 class ApiScriptStoreView(GenericAPIView):
@@ -114,6 +110,11 @@ def run_task(request):
         response = {
             'task_id': result.id
         }
+        Task.objects.create(
+            task_id=result.id,
+            task_name=taskname,
+            user=request.user
+        )
         return HttpResponse(json.dumps(response), status=status.HTTP_200_OK)
     else:
         response = {
