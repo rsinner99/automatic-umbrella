@@ -15,4 +15,6 @@ opentelemetry-instrumentation-requests
 opentelemetry-instrumentation-logging
 opentelemetry-instrumentation-dbapi
 requests
-gunicorn==20.1.0
+daphne
+channels
+channels-redis

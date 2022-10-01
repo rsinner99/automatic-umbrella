@@ -14,6 +14,7 @@ from web.utils import reverse
 from hello import tasks as hello
 from scripts.views import ScriptView
 from storage.views import FileView
+from frontend.models import Task
 
 MISSING_TASK_ID = {
     'detail': 'Please provide task id as query parameter "task"'
@@ -34,6 +35,33 @@ class ApiTaskView(GenericAPIView):
             result['task_id'] = task_id
 
         return HttpResponse(json.dumps(result), status=status.HTTP_200_OK, content_type='application/json')
+
+class ApiTaskUpdateView(GenericAPIView):
+    serializer_class = TaskSerializer
+    permission_classes = (IsAuthenticated,)
+
+    def post(self, request):
+        task_id = request.query_params.get('task', None)
+        state = request.query_params.get('state', None)
+        name = request.query_params.get('name', None)
+        user = request.user
+
+        try:
+            task = Task.objects.get(task_id=task_id)
+            task.update(
+                user=user,
+                task_name=name,
+                state=state
+            )
+        except Task.DoesNotExist:
+            task = Task.objects.create(
+                task_id=task_id,
+                user=user,
+                task_name=name,
+                state=state
+            )
+        return HttpResponse("Created/ Updated", status=status.HTTP_201_CREATED)
+
 
 class ApiScriptStoreView(GenericAPIView):
     serializer_class = TaskSerializer
