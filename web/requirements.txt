@@ -14,6 +14,7 @@ opentelemetry-instrumentation-django
 opentelemetry-instrumentation-requests
 opentelemetry-instrumentation-logging
 opentelemetry-instrumentation-dbapi
+opentelemetry-instrumentation-asgi
 requests
 daphne
 channels

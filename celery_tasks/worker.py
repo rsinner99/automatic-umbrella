@@ -42,6 +42,6 @@ def init_celery_tracing(*args, **kwargs):
 def store_task_finished(**kwargs):
     # kwargs are [task_id, task, args, kwargs, retval, state]
     task_id = kwargs.get("task_id")
-    task_name = kwargs.get("task")
+    task_name = kwargs.get("task").name
     state = kwargs.get("state")
     post_task(task_id, task_name, state)

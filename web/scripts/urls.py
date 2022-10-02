@@ -8,7 +8,7 @@ router.register(r'doc', views.DocViewSet, basename='doc')
 router.register(r'peer', views.PeerViewSet, basename='peer')
 
 urlpatterns = [
-    path('run_script', views.ScriptView.as_view()),
+    path('run_script', views.ScriptView.as_view(), name="run"),
 ]
 
 

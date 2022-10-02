@@ -24,14 +24,12 @@ asgi_application = get_asgi_application()
 
 from channels.routing import ProtocolTypeRouter, URLRouter
 from channels.auth import AuthMiddlewareStack
-from django.urls import path
-from frontend import consumers
+from .routing import websocket_urlpatterns
 
 
 application = ProtocolTypeRouter({
     "http": asgi_application,
     "websocket": AuthMiddlewareStack(
-        URLRouter(
-        [path('frontend/tasks/notification_testing/', consumers.NotificationConsumer.as_asgi())]
-        ))
+        URLRouter(websocket_urlpatterns)
+    )
 })

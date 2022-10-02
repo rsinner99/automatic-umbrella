@@ -14,4 +14,5 @@ CELERY_TASK_ROUTES =  {
 }
 
 BROKER_URL = os.environ.get("BROKER_URL", "amqp://guest:guest@localhost//")
-REDIS_URL = os.environ.get("REDIS_URL", "redis://localhost")
+REDIS_BASE_URL = os.environ.get("REDIS_URL", "redis://localhost")
+REDIS_URL = f"redis://{REDIS_BASE_URL}"
