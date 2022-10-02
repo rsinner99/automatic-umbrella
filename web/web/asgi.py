@@ -21,7 +21,6 @@ SERVICE_NAME = os.environ.get('SERVICE_NAME')
 setup_tracing(SERVICE_NAME)
 asgi_application = get_asgi_application()
 
-
 from channels.routing import ProtocolTypeRouter, URLRouter
 from channels.auth import AuthMiddlewareStack
 from .routing import websocket_urlpatterns
@@ -33,3 +32,6 @@ application = ProtocolTypeRouter({
         URLRouter(websocket_urlpatterns)
     )
 })
+
+from opentelemetry.instrumentation.asgi import OpenTelemetryMiddleware
+application = OpenTelemetryMiddleware(application)
