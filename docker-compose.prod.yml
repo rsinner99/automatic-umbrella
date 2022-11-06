@@ -28,7 +28,6 @@ services:
     env_file:
       - ./.env.prod
     environment:  
-      - EXTERNAL_API_URL=http://192.168.84.7:80
       - DJANGO_SETTINGS_MODULE=web.settings
 
   frontend:
@@ -38,7 +37,6 @@ services:
     env_file:
       - ./.env.prod
     environment:  
-      - EXTERNAL_API_URL=http://192.168.84.7:80
       - DJANGO_SETTINGS_MODULE=web.settings
 
   nginx:
